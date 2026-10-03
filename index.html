@@ -7,10 +7,26 @@
 </head>
 <body>
     <div class="sidebar">
-        <h2>Bộ lọc</h2>
+    <h2>Bộ lọc</h2>
+    <div style="margin-bottom: 15px;">
+        <label>Tìm tên:</label>
         <input type="search" id="search-input" placeholder="Tìm cầu thủ...">
-        <button type="button">Tìm kiếm</button>
     </div>
+    
+    <div style="margin-bottom: 15px;">
+        <label>Mùa thẻ:</label>
+        <select id="season-select">
+            <option value="">Tất cả mùa</option>
+            <option value="ICON">ICON</option>
+            <option value="24TY">24TY</option>
+        </select>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label>Lương tối đa:</label>
+        <input type="number" id="max-salary-input" placeholder="Nhập lương max...">
+    </div>
+</div>
     <div class="main-content">
         <div id="player-list"></div>
     </div>
