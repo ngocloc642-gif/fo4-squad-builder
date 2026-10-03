@@ -1,0 +1,30 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, sans-serif;
+}
+
+body {
+	display: flex;
+	background: #121212;
+	color: #fff;
+}
+
+.sidebar {
+	width: 25%;
+	padding: 20px;
+	background: #1e1e1e;
+	color: #fff;
+}
+
+.main-content {
+	width: 75%;
+	padding: 20px;
+	background: #121212;
+}
+
+#player-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 20px;
+}
