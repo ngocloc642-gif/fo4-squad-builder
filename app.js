@@ -1,5 +1,8 @@
+let allPlayers = [];
+
 function renderPlayers(players) {
 	const playerList = document.getElementById("player-list");
+	playerList.innerHTML = "";
 
 	players.forEach((player) => {
 		const card = document.createElement("div");
@@ -26,5 +29,16 @@ function renderPlayers(players) {
 
 fetch("data.json")
 	.then((response) => response.json())
-	.then((players) => renderPlayers(players))
+	.then((players) => {
+		allPlayers = players;
+		renderPlayers(allPlayers);
+	})
 	.catch((error) => console.error("Lỗi khi đọc data.json:", error));
+
+document.getElementById("search-input").addEventListener("input", (event) => {
+	const keyword = event.target.value.toLowerCase();
+	const filteredPlayers = allPlayers.filter((player) =>
+		player.name.toLowerCase().includes(keyword)
+	);
+	renderPlayers(filteredPlayers);
+});
