@@ -1,4 +1,14 @@
 let allPlayers = []; // Lưu trữ mảng gốc từ data.json
+let selectedSlot = null; // Lưu vị trí slot đang được chọn trên sân bóng
+
+// Bắt sự kiện chọn vị trí trên sân bóng
+document.querySelectorAll(".slot").forEach(slot => {
+    slot.addEventListener("click", () => {
+        document.querySelectorAll(".slot").forEach(s => s.classList.remove("selected-slot"));
+        slot.classList.add("selected-slot");
+        selectedSlot = slot;
+    });
+});
 
 function renderPlayers(players) {
     const playerList = document.getElementById("player-list");
@@ -26,6 +36,17 @@ function renderPlayers(players) {
             const paragraph = document.createElement("p");
             paragraph.textContent = `${label}: ${value}`;
             card.appendChild(paragraph);
+        });
+        // Bấm vào cầu thủ để xếp vào vị trí đã chọn trên sân bóng
+        card.addEventListener("click", () => {
+            if (!selectedSlot) {
+                alert("Vui lòng nhấp chọn 1 vị trí (ST, LW, RW...) trên sân bóng trước!");
+                return;
+            }
+            const nameSpan = selectedSlot.querySelector(".player-name");
+            nameSpan.textContent = player.name;
+            nameSpan.style.color = "#00ffcc";
+            nameSpan.style.fontWeight = "bold";
         });
 
         playerList.appendChild(card);
