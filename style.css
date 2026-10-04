@@ -1,30 +1,296 @@
-* {
-	margin: 0;
-	padding: 0;
-	font-family: Arial, sans-serif;
-}
-
 body {
-	display: flex;
-	background: #121212;
-	color: #fff;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #fff;
 }
 
-.sidebar {
-	width: 25%;
-	padding: 20px;
-	background: #1e1e1e;
-	color: #fff;
+.navbar {
+    background-color: #8b1518;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px;
+    border-bottom: 2px solid #5e0d10;
 }
 
-.main-content {
-	width: 75%;
-	padding: 20px;
-	background: #121212;
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
 }
 
-#player-list {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: 20px;
+.nav-links {
+    display: flex;
+    gap: 15px;
 }
+
+.nav-item {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: #6a0e11;
+    color: #ffffff;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+/* --- TAB TRA CỨU --- */
+.filter-box {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    padding: 15px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.search-row input {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background: #2b2b2b;
+    color: #fff;
+}
+
+.btn-search { background: #007bff; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-reset { background: #6c757d; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+
+.filter-label { font-weight: bold; min-width: 70px; color: #ccc; }
+
+.pos-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn-pos { background: #333; color: #fff; border: 1px solid #555; padding: 4px 10px; font-size: 13px; border-radius: 3px; cursor: pointer; }
+.btn-pos.active, .btn-pos:hover { background: #8b1518; border-color: #ff4d4d; }
+
+.season-group { display: flex; gap: 8px; }
+.badge-season { padding: 4px 10px; font-size: 12px; font-weight: bold; border-radius: 3px; cursor: pointer; background: #333; border: 1px solid #555; }
+.badge-season.active { outline: 2px solid #ffd700; }
+.icon-badge { background: #d4af37; color: #000; }
+.ty-badge { background: #1a3d54; color: #fff; border-color: #00aaff; }
+
+.filter-grid { display: flex; gap: 20px; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #333; }
+.filter-item { display: flex; align-items: center; gap: 6px; }
+.filter-item input { width: 70px; padding: 5px; background: #2b2b2b; border: 1px solid #444; color: #fff; border-radius: 3px; text-align: center; }
+
+.player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+
+/* --- TAB XÂY DỰNG ĐỘI HÌNH (SQUAD BUILDER FO4) --- */
+.squad-header-title {
+    color: #28a745;
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+/* Bảng thống kê 4 ô trắng */
+.squad-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.stat-card {
+    background: #ffffff;
+    color: #333;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.stat-title { font-size: 13px; color: #666; margin-bottom: 5px; }
+.stat-value { font-size: 18px; font-weight: bold; color: #111; }
+
+/* Thanh controls */
+.squad-controls-bar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.salary-pill { background: #fff; color: #333; padding: 6px 15px; border-radius: 4px; font-weight: bold; font-size: 14px; }
+.formation-select-wrap { background: #fff; color: #333; padding: 4px 12px; border-radius: 4px; font-weight: bold; }
+.formation-select-wrap select { border: none; outline: none; font-weight: bold; background: transparent; cursor: pointer; }
+.level-badge { background: #fff; color: #d4af37; border: 1px solid #d4af37; padding: 6px 12px; border-radius: 4px; font-weight: bold; }
+
+/* Sân bóng 3D */
+.tactical-pitch-wrapper {
+    background: radial-gradient(circle, #1b3820 0%, #0d1e11 100%);
+    border: 3px solid #28542e;
+    border-radius: 10px;
+    padding: 30px 20px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+}
+
+.tactical-pitch {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.pitch-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+/* Đặt kích thước thẻ slot */
+.squad-card-slot {
+    width: 80px;
+    height: 110px;
+    background: linear-gradient(180deg, #2a2d32 0%, #17191c 100%);
+    border: 1px solid #4d535e;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.squad-card-slot:hover {
+    transform: translateY(-4px);
+    border-color: #ffd700;
+}
+
+.pos-tag {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #aaa;
+}
+
+.plus-box {
+    font-size: 26px;
+    font-weight: bold;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    user-select: none;
+}
+
+/* Màu sắc nút + chuẩn FO4 */
+.red-plus { color: #ff4d4d; background: rgba(255, 77, 77, 0.15); }
+.green-plus { color: #28a745; background: rgba(40, 167, 69, 0.15); }
+.blue-plus { color: #007bff; background: rgba(0, 123, 255, 0.15); }
+.yellow-plus { color: #ffc107; background: rgba(255, 193, 7, 0.15); }
+.white-plus { color: #fff; background: rgba(255, 255, 255, 0.15); }
+
+/* Thẻ cầu thủ đã chọn */
+.card-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.player-filled-name { font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px; word-break: break-word; }
+.player-filled-ovr { font-size: 12px; font-weight: bold; color: #ffd700; }
+.player-filled-season { font-size: 10px; color: #00ffcc; }
+.btn-remove-player {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ff4d4d;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Dự bị */
+.bench-container {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.bench-grid {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* --- MODAL DIALOG --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: #1e1e1e;
+    width: 90%;
+    max-width: 650px;
+    max-height: 80vh;
+    border-radius: 8px;
+    border: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 15px 20px;
+    background: #282828;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+
+.modal-header h3 { margin: 0; font-size: 16px; color: #fff; }
+.btn-close-modal { background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; }
+.btn-close-modal:hover { color: #fff; }
+
+.modal-body { padding: 15px; overflow-y: auto; }
+.modal-search-input { width: 100%; padding: 10px; background: #2b2b2b; border: 1px solid #444; color: #fff; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; }
+
+.modal-player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.modal-player-item { background: #2a2a2a; padding: 10px; border-radius: 5px; border: 1px solid #444; cursor: pointer; transition: 0.2s; }
+.modal-player-item:hover { background: #383838; border-color: #28a745; }

@@ -1,32 +1,32 @@
 [
-	{
-		"id": 1,
-		"name": "Ronaldo",
-		"season": "ICON",
-		"position": "ST",
-		"ovr": 108,
-		"salary": 27,
-		"price": 2500000000,
-		"logo_url": "https://example.com/cards/ronaldo-icon.png"
-	},
-	{
-		"id": 2,
-		"name": "Messi",
-		"season": "24TY",
-		"position": "RW",
-		"ovr": 109,
-		"salary": 28,
-		"price": 3000000000,
-		"logo_url": "https://example.com/cards/messi-24ty.png"
-	},
-	{
-		"id": 3,
-		"name": "Gullit",
-		"season": "ICON",
-		"position": "CM",
-		"ovr": 107,
-		"salary": 26,
-		"price": 2200000000,
-		"logo_url": "https://example.com/cards/gullit-icon.png"
-	}
+  {
+    "id": 1,
+    "name": "Ronaldo",
+    "season": "ICON",
+    "position": "ST",
+    "ovr": 108,
+    "salary": 27,
+    "price": 25000000000,
+    "logo_url": "https://example.com/cards/ronaldo_icon.png"
+  },
+  {
+    "id": 2,
+    "name": "Messi",
+    "season": "24TY",
+    "position": "RW",
+    "ovr": 109,
+    "salary": 28,
+    "price": 30000000000,
+    "logo_url": "https://example.com/cards/messi-24ty.png"
+  },
+  {
+    "id": 3,
+    "name": "Gullit",
+    "season": "ICON",
+    "position": "CM",
+    "ovr": 107,
+    "salary": 26,
+    "price": 22000000000,
+    "logo_url": "https://example.com/cards/gullit-icon.png"
+  }
 ]

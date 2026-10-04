@@ -1,35 +1,274 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title><link rel="stylesheet" href="style.css">
+    <title>FO4PLAYERS - Tra Cứu & Xây Dựng Đội Hình</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="sidebar">
-    <h2>Bộ lọc</h2>
-    <div style="margin-bottom: 15px;">
-        <label>Tìm tên:</label>
-        <input type="search" id="search-input" placeholder="Tìm cầu thủ...">
-    </div>
-    
-    <div style="margin-bottom: 15px;">
-        <label>Mùa thẻ:</label>
-        <select id="season-select">
-            <option value="">Tất cả mùa</option>
-            <option value="ICON">ICON</option>
-            <option value="24TY">24TY</option>
-        </select>
+    <!-- Header đỏ đô chuẩn FO4PLAYERS -->
+    <header class="navbar">
+        <div class="logo">FO4PLAYERS.COM</div>
+        <div class="nav-links">
+            <a href="#" class="nav-item active" id="tab-search">🔍 Tra Cứu</a>
+            <a href="#" class="nav-item" id="tab-squad">👥 Xây Dựng Đội Hình</a>
+            <a href="#" class="nav-item">🕒 Giờ Reset</a>
+            <a href="#" class="nav-item">📈 Ranking</a>
+        </div>
+        <!-- Cụm thông tin User và Nút đăng xuất trên Header -->
+<div id="user-info-header" style="display: flex; align-items: center; gap: 12px; margin-left: 20px; padding-left: 20px; border-left: 2px solid rgba(255, 255, 255, 0.2);">
+    <span id="user-display-name" style="color: #ffd700; font-size: 15px; font-weight: bold; text-shadow: 1px 1px 2px #000;"></span>
+    <button id="btn-logout" style="display: none; background: #dc3545; color: #fff; border: 1px solid #b02a37; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: 0.2s;">
+        Đăng xuất
+    </button>
+</div>
+    </header>
+
+    <div class="container">
+        <!-- ================= TAB 1: TRA CỨU CẦU THỦ ================= -->
+        <div id="view-search">
+            <div class="filter-box">
+                <div class="filter-row search-row">
+                    <input type="search" id="search-input" placeholder="Nhập tên cầu thủ...">
+                    <button type="button" class="btn-search" id="btn-apply-filter">🔍 Tìm kiếm</button>
+                    <button type="button" class="btn-reset" id="btn-reset-filter">🔄 Tạo lại</button>
+                </div>
+
+                <div class="filter-row">
+                    <span class="filter-label">Vị trí:</span>
+                    <div class="pos-group" id="pos-group">
+                        <button class="btn-pos active" data-pos="">Tất cả</button>
+                        <button class="btn-pos" data-pos="ST">ST</button>
+                        <button class="btn-pos" data-pos="LW">LW</button>
+                        <button class="btn-pos" data-pos="RW">RW</button>
+                        <button class="btn-pos" data-pos="CM">CM</button>
+                        <button class="btn-pos" data-pos="CB">CB</button>
+                        <button class="btn-pos" data-pos="GK">GK</button>
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <span class="filter-label">Mùa thẻ:</span>
+                    <div class="season-group" id="season-group">
+                        <span class="badge-season active" data-season="">Tất cả</span>
+                        <span class="badge-season icon-badge" data-season="ICON">ICON</span>
+                        <span class="badge-season ty-badge" data-season="24TY">24TY</span>
+                    </div>
+                </div>
+
+                <div class="filter-grid">
+                    <div class="filter-item">
+                        <label>OVR:</label>
+                        <input type="number" id="min-ovr" placeholder="Min">
+                        <span>-</span>
+                        <input type="number" id="max-ovr" placeholder="Max">
+                    </div>
+                    <div class="filter-item">
+                        <label>Lương:</label>
+                        <input type="number" id="min-salary" placeholder="Min">
+                        <span>-</span>
+                        <input type="number" id="max-salary-input" placeholder="Max">
+                    </div>
+                    <div class="filter-item">
+                        <label>Giá (đ):</label>
+                        <input type="number" id="min-price" placeholder="Min">
+                        <span>-</span>
+                        <input type="number" id="max-price" placeholder="Max">
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="margin: 20px 0 10px 0;">Danh sách Cầu Thủ</h2>
+            <div id="player-list" class="player-grid"></div>
+        </div>
+
+        <!-- ================= TAB 2: XÂY DỰNG ĐỘI HÌNH ================= -->
+        <div id="view-squad" style="display: none;">
+            <h2 class="squad-header-title">Xây dựng đội hình</h2>
+
+            <!-- Bảng Thống Kê 4 Ô Trắng -->
+            <div class="squad-stats-bar">
+                <div class="stat-card">
+                    <div class="stat-title">Giá trị CLB</div>
+                    <div class="stat-value" id="stat-value">0 đ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Chiều cao TB</div>
+                    <div class="stat-value" id="stat-height">0 cm</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Lương</div>
+                    <div class="stat-value" id="stat-salary"><span id="curr-salary">0</span>/305</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Số cầu thủ</div>
+                    <div class="stat-value" id="stat-count">0</div>
+                </div>
+            </div>
+
+            <!-- Thanh Đội hình & Lương -->
+            <div class="squad-controls-bar">
+                <div class="salary-pill">Lương: <span id="ctrl-salary">0</span>/305</div>
+                <div class="formation-select-wrap">
+                    <label>Đội hình:</label>
+                    <select id="formation-select">
+                        <option value="433">4-3-3</option>
+                    </select>
+                </div>
+                <div class="level-badge">LV 5</div>
+            </div>
+
+            <!-- Khối Sân Bóng 3D Góc Nhìn FO4 -->
+            <div class="tactical-pitch-wrapper">
+                <div class="tactical-pitch">
+                    <!-- Hàng Tiền Đạo (Red +) -->
+                    <div class="pitch-row row-fw">
+                        <div class="squad-card-slot" data-slot-id="LW" data-pos="LW">
+                            <span class="pos-tag">LW</span>
+                            <div class="plus-box red-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                        <div class="squad-card-slot" data-slot-id="ST" data-pos="ST">
+                            <span class="pos-tag">ST</span>
+                            <div class="plus-box red-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                        <div class="squad-card-slot" data-slot-id="RW" data-pos="RW">
+                            <span class="pos-tag">RW</span>
+                            <div class="plus-box red-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hàng Tiền Vệ (Green +) -->
+                    <div class="pitch-row row-mf">
+                        <div class="squad-card-slot" data-slot-id="LCM" data-pos="LCM">
+                            <span class="pos-tag">LCM</span>
+                            <div class="plus-box green-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                        <div class="squad-card-slot" data-slot-id="CM" data-pos="CM">
+                            <span class="pos-tag">CM</span>
+                            <div class="plus-box green-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                        <div class="squad-card-slot" data-slot-id="RCM" data-pos="RCM">
+                            <span class="pos-tag">RCM</span>
+                            <div class="plus-box green-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hàng Hậu Vệ (Blue +) -->
+                    <div class="pitch-row row-df">
+                        <div class="squad-card-slot" data-slot-id="LB" data-pos="LB">
+                            <span class="pos-tag">LB</span>
+                            <div class="plus-box blue-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                        <div class="squad-card-slot" data-slot-id="LCB" data-pos="LCB">
+                            <span class="pos-tag">LCB</span>
+                            <div class="plus-box blue-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                        <div class="squad-card-slot" data-slot-id="RCB" data-pos="RCB">
+                            <span class="pos-tag">RCB</span>
+                            <div class="plus-box blue-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                        <div class="squad-card-slot" data-slot-id="RB" data-pos="RB">
+                            <span class="pos-tag">RB</span>
+                            <div class="plus-box blue-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                    </div>
+
+                    <!-- Thủ Môn (Yellow +) -->
+                    <div class="pitch-row row-gk">
+                        <div class="squad-card-slot" data-slot-id="GK" data-pos="GK">
+                            <span class="pos-tag">GK</span>
+                            <div class="plus-box yellow-plus">+</div>
+                            <div class="card-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cầu Thủ Dự Bị (Bench) -->
+            <div class="bench-container">
+                <div class="bench-grid">
+                    <div class="squad-card-slot bench-slot" data-slot-id="SUB1" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
+                    <div class="squad-card-slot bench-slot" data-slot-id="SUB2" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
+                    <div class="squad-card-slot bench-slot" data-slot-id="SUB3" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
+                    <div class="squad-card-slot bench-slot" data-slot-id="SUB4" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
+                    <div class="squad-card-slot bench-slot" data-slot-id="SUB5" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
+                    <div class="squad-card-slot bench-slot" data-slot-id="SUB6" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
+                    <div class="squad-card-slot bench-slot" data-slot-id="SUB7" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div style="margin-bottom: 15px;">
-        <label>Lương tối đa:</label>
-        <input type="number" id="max-salary-input" placeholder="Nhập lương max...">
+    <!-- ================= MODAL CHỌN CẦU THỦ ================= -->
+    <div id="player-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Chọn Cầu Thủ [<span id="modal-target-pos" style="color: #28a745;">ST</span>]</h3>
+                <button class="btn-close-modal" id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="modal-search-input" placeholder="Nhập tên cầu thủ để tìm..." class="modal-search-input">
+                <div id="modal-player-list" class="modal-player-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <!-- Modal Đăng nhập / Đăng ký -->
+<div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: #222; padding: 25px; border-radius: 8px; border: 1px solid #444; width: 350px; color: #fff; position: relative;">
+        <span id="btn-close-auth-modal" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; color: #aaa;">&times;</span>
+        
+        <!-- Form Đăng Nhập -->
+        <div id="form-login-box">
+            <h3 style="margin-top: 0; text-align: center; color: #00ffcc;">ĐĂNG NHẬP</h3>
+            <p style="font-size: 13px; color: #ccc; text-align: center;">Bạn cần đăng nhập để sử dụng tính năng Xây dựng Đội hình</p>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: #aaa;">Tên đăng nhập:</label>
+                <input type="text" id="login-username" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 12px; color: #aaa;">Mật khẩu:</label>
+                <input type="password" id="login-password" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+            </div>
+            <button id="btn-submit-login" style="width: 100%; padding: 10px; background: #00ffcc; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Đăng Nhập</button>
+            <p style="font-size: 12px; text-align: center; margin-top: 12px; color: #aaa;">Chưa có tài khoản? <a href="#" id="link-show-register" style="color: #00ffcc;">Đăng ký ngay</a></p>
+        </div>
+
+        <!-- Form Đăng Ký -->
+        <div id="form-register-box" style="display: none;">
+            <h3 style="margin-top: 0; text-align: center; color: #ffd700;">ĐĂNG KÝ TÀI KHOẢN</h3>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: #aaa;">Họ và tên:</label>
+                <input type="text" id="reg-fullname" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: #aaa;">Tên đăng nhập:</label>
+                <input type="text" id="reg-username" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 12px; color: #aaa;">Mật khẩu:</label>
+                <input type="password" id="reg-password" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+            </div>
+            <button id="btn-submit-register" style="width: 100%; padding: 10px; background: #ffd700; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Tạo Tài Khoản</button>
+            <p style="font-size: 12px; text-align: center; margin-top: 12px; color: #aaa;">Đã có tài khoản? <a href="#" id="link-show-login" style="color: #ffd700;">Đăng nhập</a></p>
+        </div>
     </div>
 </div>
-    <div class="main-content">
-        <div id="player-list"></div>
-    </div>
-    <script src="app.js"></script>
+<!-- Dán vào góc trên bên phải header của bạn -->
+<div id="user-info-bar" style="margin-left: auto; color: #fff; font-size: 14px;">
+    <button id="btn-logout" style="display: none; margin-left: 10px; padding: 4px 10px; background: #ff4d4d; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Đăng xuất</button>
+</div>
 </body>
 </html>
