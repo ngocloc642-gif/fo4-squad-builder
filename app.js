@@ -7,29 +7,38 @@ let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
 
 document.addEventListener("DOMContentLoaded", () => {
     init();
-    updateUIAuth(); // Gọi hàm cập nhật UI
+    updateUIAuth(); // Cập nhật UI đăng nhập & phân quyền Admin
     setupEventListeners();
 });
 
-// 1. Đưa hàm này ra ngoài cùng để trình duyệt không bị lỗi
+// 1. Hàm cập nhật trạng thái hiển thị tên, nút Đăng xuất & Tab Admin
 function updateUIAuth() {
     const userDisplayName = document.getElementById("user-display-name");
     const btnLogout = document.getElementById("btn-logout");
+    const tabAdmin = document.getElementById("tab-admin");
 
     if (currentUser) {
-        if (userDisplayName) userDisplayName.innerText = `Xin chào, ${currentUser.fullname} (${currentUser.role.toUpperCase()})`;
+        const roleTag = currentUser.role ? `(${currentUser.role.toUpperCase()})` : '';
+        if (userDisplayName) userDisplayName.innerText = `Xin chào, ${currentUser.fullname} ${roleTag}`;
         if (btnLogout) btnLogout.style.display = "inline-block";
+
+        // Chỉ hiển thị Nút Admin nếu người dùng có quyền admin
+        if (tabAdmin) {
+            const isAdmin = currentUser.role && currentUser.role.toLowerCase() === "admin";
+            tabAdmin.style.display = isAdmin ? "inline-block" : "none";
+        }
     } else {
         if (userDisplayName) userDisplayName.innerText = "";
         if (btnLogout) btnLogout.style.display = "none";
+        if (tabAdmin) tabAdmin.style.display = "none";
     }
 }
 
-// Tải dữ liệu từ data.json
+// Tải dữ liệu cầu thủ từ CSDL qua api.php
 async function init() {
     try {
         const response = await fetch("api.php");
-        if (!response.ok) throw new Error("Không tìm thấy file data.json");
+        if (!response.ok) throw new Error("Không thể lấy dữ liệu từ api.php");
         
         allPlayers = await response.json();
         console.log("Đã tải thành công database:", allPlayers);
@@ -42,11 +51,14 @@ async function init() {
 }
 
 function setupEventListeners() {
-    // 1. Chuyển Tab Tra Cứu / Đội Hình
+    // Các phần tử chuyển Tab
     const tabSearch = document.getElementById("tab-search");
     const tabSquad = document.getElementById("tab-squad");
+    const tabAdmin = document.getElementById("tab-admin");
+
     const viewSearch = document.getElementById("view-search");
     const viewSquad = document.getElementById("view-squad");
+    const viewAdmin = document.getElementById("view-admin");
 
     // --- XỬ LÝ CHUYỂN TAB ĐỘI HÌNH VÀ KIỂM TRA ĐĂNG NHẬP ---
     tabSquad?.addEventListener("click", (e) => {
@@ -59,7 +71,10 @@ function setupEventListeners() {
 
         tabSquad.classList.add("active");
         tabSearch?.classList.remove("active");
+        tabAdmin?.classList.remove("active");
+
         if (viewSearch) viewSearch.style.display = "none";
+        if (viewAdmin) viewAdmin.style.display = "none";
         if (viewSquad) viewSquad.style.display = "block";
     });
 
@@ -68,8 +83,58 @@ function setupEventListeners() {
         e.preventDefault();
         tabSearch.classList.add("active");
         tabSquad?.classList.remove("active");
+        tabAdmin?.classList.remove("active");
+
         if (viewSquad) viewSquad.style.display = "none";
+        if (viewAdmin) viewAdmin.style.display = "none";
         if (viewSearch) viewSearch.style.display = "block";
+    });
+
+    // --- XỬ LÝ CHUYỂN SANG TAB QUẢN TRỊ (ADMIN) ---
+    tabAdmin?.addEventListener("click", (e) => {
+        e.preventDefault();
+        tabAdmin.classList.add("active");
+        tabSearch?.classList.remove("active");
+        tabSquad?.classList.remove("active");
+
+        if (viewSearch) viewSearch.style.display = "none";
+        if (viewSquad) viewSquad.style.display = "none";
+        if (viewAdmin) viewAdmin.style.display = "block";
+    });
+
+    // --- XỬ LÝ SỰ KIỆN LƯU CẦU THỦ MỚI TỪ FORM ADMIN ---
+    document.getElementById("form-add-player")?.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const playerData = {
+            name: document.getElementById("p-name")?.value || "",
+            season: document.getElementById("p-season")?.value || "",
+            position: document.getElementById("p-position")?.value || "",
+            ovr: parseInt(document.getElementById("p-ovr")?.value) || 0,
+            salary: parseInt(document.getElementById("p-salary")?.value) || 0,
+            price: parseInt(document.getElementById("p-price")?.value) || 0,
+            nationality: document.getElementById("p-nation")?.value || "",
+            avatar_url: document.getElementById("p-avatar")?.value || ""
+        };
+
+        try {
+            const res = await fetch("admin_api.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(playerData)
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                alert("✅ " + result.message);
+                this.reset(); // Xóa trắng form sau khi lưu
+                init(); // Tải lại danh sách cầu thủ mới vào ứng dụng
+            } else {
+                alert("❌ Lỗi: " + result.message);
+            }
+        } catch (err) {
+            alert("❌ Lỗi kết nối máy chủ admin_api.php!");
+        }
     });
 
     // --- CÁC SỰ KIỆN XỬ LÝ MODAL ĐĂNG NHẬP / ĐĂNG KÝ ---
@@ -136,7 +201,7 @@ function setupEventListeners() {
         tabSearch.click(); // Đăng xuất xong đẩy về Tra Cứu
     });
 
-    // 2. Bộ lọc Tab Tra Cứu
+    // --- BỘ LỌC TAB TRA CỨU ---
     document.querySelectorAll(".btn-pos").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".btn-pos").forEach(b => b.classList.remove("active"));
@@ -167,7 +232,7 @@ function setupEventListeners() {
         renderSearchList(allPlayers);
     });
 
-    // 3. Mở Pop-up chọn cầu thủ khi nhấn dấu + trên sân
+    // --- MỞ POP-UP CHỌN CẦU THỦ KHI NHẤN DẤU + TRÊN SÂN ---
     document.querySelectorAll(".squad-card-slot").forEach(slot => {
         slot.addEventListener("click", (e) => {
             if (e.target.classList.contains("btn-remove-player")) return;
@@ -187,13 +252,13 @@ function setupEventListeners() {
         });
     });
 
-    // 4. Đóng Pop-up Modal
+    // --- ĐÓNG POP-UP MODAL ---
     document.getElementById("btn-close-modal")?.addEventListener("click", () => {
         const playerModal = document.getElementById("player-modal");
         if (playerModal) playerModal.style.display = "none";
     });
 
-    // 5. Ô tìm kiếm trong Pop-up Modal
+    // --- Ô TÌM KIẾM TRONG POP-UP MODAL ---
     document.getElementById("modal-search-input")?.addEventListener("input", (e) => {
         const kw = e.target.value.toLowerCase();
         const filtered = allPlayers.filter(p =>
@@ -224,7 +289,7 @@ function renderSearchList(players) {
             <div style="font-size: 13px; color: #aaa;">Mùa thẻ: ${p.season}</div>
             <div style="font-size: 13px; color: #ffd700;">OVR: ${p.ovr} | Vị trí: ${p.position || 'N/A'}</div>
             <div style="font-size: 13px; color: #00ffcc;">Lương: ${p.salary}</div>
-            <div style="font-size: 13px; color: #ccc;">Giá: ${p.price ? p.price.toLocaleString() : 'N/A'} đ</div>
+            <div style="font-size: 13px; color: #ccc;">Giá: ${p.price ? Number(p.price).toLocaleString() : 'N/A'} đ</div>
         `;
         container.appendChild(item);
     });
@@ -325,9 +390,9 @@ function updateSquadStats() {
 
     Object.values(squadState).forEach(p => {
         if (p) {
-            totalValue += p.price || 0;
-            totalSalary += p.salary || 0;
-            totalHeight += p.height || 180;
+            totalValue += Number(p.price) || 0;
+            totalSalary += Number(p.salary) || 0;
+            totalHeight += Number(p.height) || 180;
             count++;
         }
     });
