@@ -43,4 +43,24 @@ if ($action === 'delete') {
     }
     exit;
 }
+// 4. SỬA (CẬP NHẬT) CẦU THỦ
+if ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    $id = $data['id'] ?? 0;
+    $name = $data['name'] ?? '';
+    $season = $data['season'] ?? '';
+    $position = $data['position'] ?? '';
+    $ovr = $data['ovr'] ?? 0;
+    $salary = $data['salary'] ?? 0;
+    $price = $data['price'] ?? 0;
+
+    $stmt = $pdo->prepare("UPDATE players SET name=?, season=?, position=?, ovr=?, salary=?, price=? WHERE id=?");
+    if ($stmt->execute([$name, $season, $position, $ovr, $salary, $price, $id])) {
+        echo json_encode(["status" => "success", "message" => "Đã cập nhật thông tin cầu thủ!"]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Lỗi khi cập nhật!"]);
+    }
+    exit;
+}
 ?>

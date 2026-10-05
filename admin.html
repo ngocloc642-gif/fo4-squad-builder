@@ -43,6 +43,9 @@
         <div class="box">
             <h3 style="color: #00ffcc;">➕ Thêm Cầu Thủ Mới</h3>
             <form id="admin-form">
+               
+                <input type="hidden" id="a-id">
+                
                 <div class="form-group">
                     <label>Tên cầu thủ:</label>
                     <input type="text" id="a-name" required placeholder="Ví dụ: Ronaldo">
@@ -67,7 +70,10 @@
                     <label>Giá tiền (VNĐ):</label>
                     <input type="number" id="a-price" required placeholder="Ví dụ: 25000000000">
                 </div>
-                <button type="submit" class="btn-submit">Lưu Cầu Thủ</button>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" id="btn-save" class="btn-submit">➕ Thêm Cầu Thủ</button>
+                    <button type="button" id="btn-cancel" class="btn-submit" style="display: none; background: #6c757d;" onclick="cancelEdit()">Hủy</button>
+                </div>
             </form>
         </div>
 
