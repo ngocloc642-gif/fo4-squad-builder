@@ -411,3 +411,14 @@ function updateSquadStats() {
     if (elCtrlSalary) elCtrlSalary.innerText = totalSalary;
     if (elCount) elCount.innerText = count;
 }
+// Bắt sự kiện double-click vào dấu chấm bí mật
+document.addEventListener('DOMContentLoaded', function() {
+    const secretDot = document.getElementById('secret-admin');
+    
+    if (secretDot) {
+        secretDot.addEventListener('dblclick', function() {
+            // Khi click đúp thành công, chuyển hướng người dùng sang trang quản trị
+            window.location.href = 'admin.html';
+        });
+    }
+});

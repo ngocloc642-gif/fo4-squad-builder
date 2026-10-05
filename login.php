@@ -22,15 +22,15 @@ if ($user && password_verify($password, $user['password'])) {
     unset($user['password']);
     
     echo json_encode([
-        "status" => "success",
-        "message" => "Đăng nhập thành công!",
-        "user" => [
-            "id" => (int)$user['id'],
-            "username" => $user['username'],
-            "fullname" => $user['fullname'],
-            "role" => $user['role'] // 'admin' hoặc 'user'
-        ]
-    ]);
+            "status" => "success",
+            "message" => "Đăng nhập thành công!",
+            "role" => $user['role'], // Dành cho admin_login.html kiểm tra
+            "user" => [              // Dành cho app.js lưu thông tin hiển thị (USER)
+                "fullname" => $user['fullname'],
+                "username" => $user['username'],
+                "role" => $user['role']
+            ]
+        ]);
 } else {
     echo json_encode(["status" => "error", "message" => "Tên đăng nhập hoặc mật khẩu không chính xác!"]);
 }

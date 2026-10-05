@@ -294,3 +294,9 @@ body {
 .modal-player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 .modal-player-item { background: #2a2a2a; padding: 10px; border-radius: 5px; border: 1px solid #444; cursor: pointer; transition: 0.2s; }
 .modal-player-item:hover { background: #383838; border-color: #28a745; }
+/* Ngụy trang lối vào Admin */
+.secret-admin-link {
+    cursor: default; /* Giữ nguyên con trỏ chuột bình thường */
+    user-select: none; /* Quan trọng: Ngăn không cho người dùng bôi đen dấu chấm khi click đúp */
+    -webkit-user-select: none; 
+}
