@@ -18,7 +18,7 @@
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #ccc; }
-        .form-group input { width: 100%; padding: 10px; background: #181818; border: 1px solid #444; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; background: #181818; border: 1px solid #444; color: #fff; border-radius: 4px; box-sizing: border-box; }
         .btn-submit { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .btn-submit:hover { background: #218838; }
 
@@ -53,40 +53,67 @@
         <div class="box">
             <h3 style="color: #00ffcc;">➕ Thêm Cầu Thủ Mới</h3>
             <form id="admin-form">
-               
+                <!-- ID ẩn dùng để nhận diện khi nào là Thêm, khi nào là Sửa -->
                 <input type="hidden" id="a-id">
                 
                 <div class="form-group">
                     <label>Tên cầu thủ:</label>
                     <input type="text" id="a-name" required placeholder="Ví dụ: Ronaldo">
                 </div>
-<div class="form-group">
-    <label>Mùa thẻ:</label>
-    <div class="custom-select" id="season-selector">
-        <div class="select-selected">
-            <span id="selected-season-text">Chọn mùa thẻ</span>
-        </div>
-        
-        <div class="select-items select-hide"></div>
-    </div>
-    <input type="hidden" id="a-season" required>
-</div>
+
+                <div class="form-group">
+                    <label>Mùa thẻ:</label>
+                    <div class="custom-select" id="season-selector">
+                        <div class="select-selected">
+                            <span id="selected-season-text">Chọn mùa thẻ</span>
+                        </div>
+                        <div class="select-items select-hide"></div>
+                    </div>
+                    <input type="hidden" id="a-season" required>
+                </div>
+
                 <div class="form-group">
                     <label>Vị trí:</label>
-                    <input type="text" id="a-pos" required placeholder="Ví dụ: ST">
+                    <div class="custom-select" id="pos-selector">
+                        <div class="select-selected">
+                            <span id="selected-pos-text">Chọn vị trí</span>
+                        </div>
+                        <div class="select-items select-hide">
+                            <div data-value="ST">ST</div>
+                            <div data-value="CF">CF</div>
+                            <div data-value="LW">LW</div>
+                            <div data-value="RW">RW</div>
+                            <div data-value="CM">CM</div>
+                            <div data-value="CAM">CAM</div>
+                            <div data-value="CDM">CDM</div>
+                            <div data-value="LM">LM</div>
+                            <div data-value="RM">RM</div>
+                            <div data-value="CB">CB</div>
+                            <div data-value="RB">RB</div>
+                            <div data-value="LB">LB</div>
+                            <div data-value="RWB">RWB</div>
+                            <div data-value="LWB">LWB</div>
+                            <div data-value="GK">GK</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="a-pos" required>
                 </div>
+
                 <div class="form-group">
                     <label>Chỉ số OVR:</label>
                     <input type="number" id="a-ovr" required placeholder="Ví dụ: 108">
                 </div>
+                
                 <div class="form-group">
                     <label>Lương:</label>
                     <input type="number" id="a-salary" required placeholder="Ví dụ: 27">
                 </div>
+                
                 <div class="form-group">
                     <label>Giá tiền (VNĐ):</label>
                     <input type="number" id="a-price" required placeholder="Ví dụ: 25000000000">
                 </div>
+                
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" id="btn-save" class="btn-submit">➕ Thêm Cầu Thủ</button>
                     <button type="button" id="btn-cancel" class="btn-submit" style="display: none; background: #6c757d;" onclick="cancelEdit()">Hủy</button>

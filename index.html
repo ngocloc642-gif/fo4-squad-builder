@@ -34,19 +34,27 @@
                     <button type="button" class="btn-search" id="btn-apply-filter">🔍 Tìm kiếm</button>
                     <button type="button" class="btn-reset" id="btn-reset-filter">🔄 Tạo lại</button>
                 </div>
-
                 <div class="filter-row">
-                    <span class="filter-label">Vị trí:</span>
-                    <div class="pos-group" id="pos-group">
-                        <button class="btn-pos active" data-pos="">Tất cả</button>
+                    <span class="filter-label" style="font-weight: bold; color: #ccc; margin-right: 15px;">Vị trí:</span>
+                    <div class="pos-group" id="pos-group" style="display: flex; flex-wrap: wrap; gap: 8px;">
                         <button class="btn-pos" data-pos="ST">ST</button>
+                        <button class="btn-pos" data-pos="CF">CF</button>
                         <button class="btn-pos" data-pos="LW">LW</button>
                         <button class="btn-pos" data-pos="RW">RW</button>
                         <button class="btn-pos" data-pos="CM">CM</button>
+                        <button class="btn-pos" data-pos="CAM">CAM</button>
+                        <button class="btn-pos" data-pos="CDM">CDM</button>
+                        <button class="btn-pos" data-pos="LM">LM</button>
+                        <button class="btn-pos" data-pos="RM">RM</button>
                         <button class="btn-pos" data-pos="CB">CB</button>
+                        <button class="btn-pos" data-pos="RB">RB</button>
+                        <button class="btn-pos" data-pos="LB">LB</button>
+                        <button class="btn-pos" data-pos="RWB">RWB</button>
+                        <button class="btn-pos" data-pos="LWB">LWB</button>
                         <button class="btn-pos" data-pos="GK">GK</button>
                     </div>
                 </div>
+                
 
                 <div class="filter-group">
     <label>Mùa thẻ:</label>
@@ -262,10 +270,6 @@
             <p style="font-size: 12px; text-align: center; margin-top: 12px; color: #aaa;">Đã có tài khoản? <a href="#" id="link-show-login" style="color: #ffd700;">Đăng nhập</a></p>
         </div>
     </div>
-</div>
-<!-- Dán vào góc trên bên phải header của bạn -->
-<div id="user-info-bar" style="margin-left: auto; color: #fff; font-size: 14px;">
-    <button id="btn-logout" style="display: none; margin-left: 10px; padding: 4px 10px; background: #ff4d4d; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Đăng xuất</button>
 </div>
 <footer class="site-footer">
     <p style="text-align: center; margin-top: 50px; color: #666; font-size: 14px;">

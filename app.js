@@ -212,16 +212,23 @@ function setupEventListeners() {
         alert("Đã đăng xuất!");
         tabSearch.click(); // Đăng xuất xong đẩy về Tra Cứu
     });
-
-    // --- BỘ LỌC TAB TRA CỨU ---
+    // --- BỘ LỌC VỊ TRÍ (DẠNG NÚT BẤM) ---
     document.querySelectorAll(".btn-pos").forEach(btn => {
         btn.addEventListener("click", () => {
-            document.querySelectorAll(".btn-pos").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            selectedPos = btn.dataset.pos || "";
+            // Nếu bấm lại nút đang sáng -> Tắt chọn (Xem tất cả vị trí)
+            if (btn.classList.contains("active")) {
+                btn.classList.remove("active");
+                selectedPos = "";
+            } else {
+                // Tắt các nút khác, làm sáng nút vừa bấm
+                document.querySelectorAll(".btn-pos").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                selectedPos = btn.dataset.pos || "";
+            }
             applySearchFilters();
         });
     });
+
 // --- BỘ LỌC MÙA THẺ (EVENT DELEGATION) ---
     const filterContainer = document.getElementById('user-season-filter');
     if (filterContainer) {
