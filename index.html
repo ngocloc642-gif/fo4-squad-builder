@@ -48,14 +48,11 @@
                     </div>
                 </div>
 
-                <div class="filter-row">
-                    <span class="filter-label">Mùa thẻ:</span>
-                    <div class="season-group" id="season-group">
-                        <span class="badge-season active" data-season="">Tất cả</span>
-                        <span class="badge-season icon-badge" data-season="ICON">ICON</span>
-                        <span class="badge-season ty-badge" data-season="24TY">24TY</span>
-                    </div>
-                </div>
+                <div class="filter-group">
+    <label>Mùa thẻ:</label>
+    <div id="user-season-filter">
+    </div>
+</div>
 
                 <div class="filter-grid">
                     <div class="filter-item">
@@ -223,7 +220,7 @@
             </div>
         </div>
     </div>
-
+    <script src="seasons.js"></script>
     <script src="app.js"></script>
     <!-- Modal Đăng nhập / Đăng ký -->
 <div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
@@ -275,5 +272,6 @@
         &copy; 2026 FC Online Squad Builder. All rights reserved<span style="user-select: none; -webkit-user-select: none; cursor: default;" ondblclick="window.location.href='admin_login.html'">.</span>
     </p>
 </footer>
+
 </body>
 </html>

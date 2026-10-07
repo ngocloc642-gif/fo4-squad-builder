@@ -1,23 +1,70 @@
-let adminPlayersList = []; // Biến toàn cục để lưu danh sách cầu thủ hiện tại
+let adminPlayersList = []; 
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Tải danh sách cầu thủ
     loadPlayers();
 
+    // 2. KHỞI TẠO DROPDOWN MÙA THẺ
+    const itemsList = document.querySelector(".select-items");
+    const customSelect = document.getElementById("season-selector");
+    const selectedBox = customSelect.querySelector(".select-selected");
+    const hiddenInput = document.getElementById("a-season");
+
+    // Đổ dữ liệu từ mảng FO4_SEASONS vào HTML
+    if (itemsList && typeof FO4_SEASONS !== 'undefined') {
+        itemsList.innerHTML = ''; 
+        FO4_SEASONS.forEach(s => {
+            itemsList.innerHTML += `<div data-value="${s.id}"><img src="${s.img}" width="25"> ${s.name}</div>`;
+        });
+    }
+
+    // Gắn sự kiện click mở menu
+    if (selectedBox && itemsList) {
+        selectedBox.addEventListener("click", function(e) {
+            e.stopPropagation(); 
+            itemsList.classList.toggle("select-hide");
+        });
+
+        // Gắn sự kiện chọn từng item (Phải dùng Event Delegation để bắt được các thẻ div vừa tạo ra)
+        itemsList.addEventListener("click", function(e) {
+            // Tìm thẻ div chứa data-value gần nhất mà người dùng vừa click
+            const optionDiv = e.target.closest('div[data-value]'); 
+            if (optionDiv) {
+                const value = optionDiv.getAttribute("data-value");
+                selectedBox.innerHTML = optionDiv.innerHTML; 
+                hiddenInput.value = value;
+                itemsList.classList.add("select-hide");
+            }
+        });
+
+        // Bấm ra ngoài thì đóng
+        document.addEventListener("click", function(e) {
+            if (!customSelect.contains(e.target)) {
+                itemsList.classList.add("select-hide");
+            }
+        });
+    }
+
+    // 3. XỬ LÝ LƯU/CẬP NHẬT
     document.getElementById('admin-form').addEventListener('submit', async (e) => {
         e.preventDefault(); 
+        
+        if (!hiddenInput.value) {
+            alert("Vui lòng chọn mùa thẻ!");
+            return;
+        }
 
         const id = document.getElementById('a-id').value;
         const player = {
-            id: id, // Nếu form đang ở chế độ thêm mới thì id này rỗng
+            id: id,
             name: document.getElementById('a-name').value,
-            season: document.getElementById('a-season').value,
+            season: hiddenInput.value, 
             position: document.getElementById('a-pos').value,
             ovr: document.getElementById('a-ovr').value,
             salary: document.getElementById('a-salary').value,
             price: document.getElementById('a-price').value
         };
 
-        // Nếu có ID thì là chức năng Cập nhật (update), không có ID thì là Thêm mới (add)
         const actionUrl = id ? 'admin_api.php?action=update' : 'admin_api.php?action=add';
 
         try {
@@ -30,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (data.status === 'success') {
                 alert("✅ " + data.message);
-                cancelEdit(); // Reset form về trạng thái Thêm mới
+                cancelEdit(); 
                 loadPlayers(); 
             } else {
                 alert("❌ " + data.message);
@@ -42,10 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// 4. CÁC HÀM XỬ LÝ BẢNG
 async function loadPlayers() {
     try {
         const res = await fetch('admin_api.php?action=list');
-        adminPlayersList = await res.json(); // Lưu vào biến toàn cục để lát lấy dữ liệu đem đi sửa
+        adminPlayersList = await res.json(); 
         
         const tbody = document.getElementById('admin-table-body');
         tbody.innerHTML = ''; 
@@ -70,34 +118,44 @@ async function loadPlayers() {
     }
 }
 
-// Hàm được gọi khi bấm nút "Sửa" trên bảng
 function editPlayer(id) {
-    // Tìm cầu thủ trong danh sách dựa vào ID
     const p = adminPlayersList.find(player => player.id == id);
     if (!p) return;
 
-    // Đổ dữ liệu lên form
     document.getElementById('a-id').value = p.id;
     document.getElementById('a-name').value = p.name;
-    document.getElementById('a-season').value = p.season;
     document.getElementById('a-pos').value = p.position;
     document.getElementById('a-ovr').value = p.ovr;
     document.getElementById('a-salary').value = p.salary;
     document.getElementById('a-price').value = p.price;
 
-    // Đổi giao diện form sang trạng thái Cập nhật
+    const hiddenInput = document.getElementById('a-season');
+    const selectedBox = document.querySelector(".select-selected");
+    hiddenInput.value = p.season;
+    
+    if (typeof FO4_SEASONS !== 'undefined') {
+        const seasonData = FO4_SEASONS.find(s => s.id === p.season);
+        if (seasonData) {
+            selectedBox.innerHTML = `<img src="${seasonData.img}" width="25"> ${seasonData.name}`;
+        } else {
+            selectedBox.innerHTML = p.season;
+        }
+    }
+
     document.getElementById('btn-save').innerText = '🔄 Cập Nhật';
     document.getElementById('btn-save').style.background = '#007bff';
     document.getElementById('btn-cancel').style.display = 'block';
     
-    // Cuộn trang lên trên cùng để dễ nhập liệu
     window.scrollTo(0, 0);
 }
 
-// Hàm Hủy sửa (Khôi phục form về trạng thái Thêm mới)
 function cancelEdit() {
     document.getElementById('admin-form').reset();
     document.getElementById('a-id').value = '';
+    document.getElementById('a-season').value = '';
+    
+    const selectedBox = document.querySelector(".select-selected");
+    if (selectedBox) selectedBox.innerHTML = 'Chọn mùa thẻ';
     
     document.getElementById('btn-save').innerText = '➕ Thêm Cầu Thủ';
     document.getElementById('btn-save').style.background = '#28a745';
@@ -109,7 +167,6 @@ async function deletePlayer(id) {
         try {
             const res = await fetch(`admin_api.php?action=delete&id=${id}`);
             const data = await res.json();
-            
             if (data.status === 'success') {
                 loadPlayers();
             } else {

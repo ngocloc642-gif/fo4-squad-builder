@@ -48,6 +48,18 @@ async function init() {
     } catch (error) {
         console.error("Lỗi đọc dữ liệu database:", error);
     }
+    // Render bộ lọc mùa thẻ bên User
+const seasonContainer = document.getElementById('user-season-filter');
+if (seasonContainer && typeof FO4_SEASONS !== 'undefined') {
+    seasonContainer.innerHTML = ''; // Xóa sạch khung trước khi vẽ
+    FO4_SEASONS.forEach(s => {
+        seasonContainer.innerHTML += `
+            <span class="badge-season" data-season="${s.id}" style="display:inline-flex; align-items:center; gap:5px; cursor: pointer;">
+                <img src="${s.img}" style="width:25px; height:20px; object-fit:contain;"> ${s.name}
+            </span>
+        `;
+    });
+}
 }
 
 function setupEventListeners() {
@@ -210,15 +222,26 @@ function setupEventListeners() {
             applySearchFilters();
         });
     });
+// --- BỘ LỌC MÙA THẺ (EVENT DELEGATION) ---
+    const filterContainer = document.getElementById('user-season-filter');
+    if (filterContainer) {
+        filterContainer.addEventListener("click", (e) => {
+            const badge = e.target.closest(".badge-season");
+            if (!badge) return; // Không click trúng thẻ thì bỏ qua
 
-    document.querySelectorAll(".badge-season").forEach(badge => {
-        badge.addEventListener("click", () => {
-            document.querySelectorAll(".badge-season").forEach(b => b.classList.remove("active"));
-            badge.classList.add("active");
-            selectedSeason = badge.dataset.season || "";
-            applySearchFilters();
+            // Nếu nút đang sáng mà bấm lại -> Tắt đi (Chế độ xem Tất cả)
+            if (badge.classList.contains("active")) {
+                badge.classList.remove("active");
+                selectedSeason = "";
+            } else {
+                // Tắt các nút khác, bật nút vừa bấm
+                document.querySelectorAll(".badge-season").forEach(b => b.classList.remove("active"));
+                badge.classList.add("active");
+                selectedSeason = badge.dataset.season || "";
+            }
+            applySearchFilters(); // Lọc lại danh sách
         });
-    });
+    }
 
     document.getElementById("btn-apply-filter")?.addEventListener("click", applySearchFilters);
     document.getElementById("search-input")?.addEventListener("input", applySearchFilters);
