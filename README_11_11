@@ -1,0 +1,34 @@
+         Báo Cáo Xây Dựng & Kiểm Soát Dự Án FO4PLAYERS
+Tài liệu này trình bày phương pháp luận, kỹ năng kiểm soát mã nguồn và tư duy quản lý dự án trong quá trình xây dựng hệ thống Tra cứu & Xây dựng đội hình FC Online (FO4PLAYERS).
+
+1. Xây Dựng Hệ Thống Với Sự Trợ Giúp Của AI Agent (Copilot, Claude, Gemini...)
+
+Prompting theo ngữ cảnh cụ thể (Contextual Prompting): Khi gặp lỗi logic nghiệp vụ phức tạp, ví dụ: Lỗi cho phép xếp 11 thẻ Messi vào cùng một đội hình hoặc Thủ môn (GK) bị lẫn lộn với Tiền đạo, tôi cung cấp cho AI cấu trúc mảng squadState và file app.js. AI hỗ trợ phân tích và chỉ ra giải pháp: Cần viết thêm một hàm lọc chuyên dụng getAvailablePlayersForSlot() để đối chiếu tên cầu thủ và vị trí trước khi hiển thị lên Modal.
+
+Phát hiện lỗi tiềm ẩn (Debugging): Nhờ AI rà soát code để phát hiện các lỗi "sai một ly đi một dặm", chẳng hạn như việc gõ nhầm toán tử =- thành <= khiến bộ lọc Min/Max Lương và Giá tiền hoạt động sai lệch.
+
+2. Kỹ Năng Kiểm Soát Code
+a) Kiểm soát tính năng trong dự án (Biết code ở đâu, sửa thế nào)
+Tính năng đăng nhập/đăng ký: Nằm ở sự kiện click trong app.js (Frontend) và register.php, login.php (Backend).
+
+Để tạo ràng buộc mật khẩu phải có dấu @,vào file app.js (hàm bắt sự kiện btn-submit-register), lấy biến password và dùng lệnh if (!password.includes('@')) để chặn và return ngay lập tức, không cho phép gửi API xuống server. Đồng thời xử lý kép ở PHP để tránh bypass.
+
+Tính năng logic Đội hình (Squad Builder): Nằm tại file app.js. Khi muốn sửa điều kiện lọc cầu thủ (chống trùng tên), tôi biết chính xác cần tìm đến biến toàn cục squadState (nơi lưu 11 cầu thủ trên sân) và hàm getAvailablePlayersForSlot() để thêm logic !currentSquadNames.includes(p.name).
+
+b) Kỹ năng dùng Skill (Graphify...) phục vụ viết code
+Áp dụng vào thực tế: Sơ đồ giúp tôi định hình rõ luồng: User click ô dấu + ➡️ Đọc data-slot-id (VD: LW, ST, GK) ➡️ Chạy hàm check squadState xem Messi đã có mặt chưa ➡️ Render danh sách hợp lệ ra Modal. Việc hình dung rõ mô hình giúp không bị rối khi xử lý các mảng dữ liệu JSON lớn.
+
+Ý 3: Kết Hợp Các Công Cụ Test Tính Năng (Nâng Cao)
+Việc kiểm thử (Testing) trong FO4PLAYERS được thực hiện chặt chẽ qua nhiều lớp:
+
+Test Giao diện & Logic bằng Boundary Value (Giá trị biên): Cố tình nhập bộ lọc lương Min 29 - Max 30 để xem hệ thống có loại bỏ được thẻ lương 28 hay không.
+
+Test Edge Cases (Trường hợp ngoại lệ):
+
+Cố tình thêm 1 cầu thủ (ví dụ Messi) nhiều lần vào các vị trí khác nhau để test màng lọc chặn trùng lặp.
+
+Click vào ô thủ môn (GK) và thử tìm kiếm một tiền đạo để đảm bảo màng lọc phân lập vị trí hoạt động tốt.
+
+Sử dụng Browser DevTools 
+
+Dùng tab Console (F12) để rà soát các biến bị null hoặc sai ID thẻ HTML gây lỗi đè giao diện.
