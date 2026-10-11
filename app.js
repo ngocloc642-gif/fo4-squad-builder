@@ -407,32 +407,6 @@ function applySearchFilters() {
     renderSearchList(filtered);
 }
 
-function selectPlayerForSlot(slotId, player) {
-    if (!slotId) return;
-    squadState[slotId] = player;
-
-    const slotElem = document.querySelector(`.squad-card-slot[data-slot-id="${slotId}"]`);
-    if (!slotElem) return;
-
-    const plusBox = slotElem.querySelector(".plus-box");
-    const cardContent = slotElem.querySelector(".card-content");
-
-    if (plusBox) plusBox.style.display = "none";
-
-    if (cardContent) {
-        const avatarImg = player.avatar_url ? `<img src="${player.avatar_url}" style="width:40px; height:40px; object-fit:contain; display:block; margin: 0 auto;">` : '';
-
-        cardContent.innerHTML = `
-            <div class="btn-remove-player" onclick="removePlayerFromSlot('${slotId}', event)">&times;</div>
-            <div class="player-filled-ovr" style="color: #ffd700; font-weight: bold;">${player.ovr}</div>
-            ${avatarImg}
-            <div class="player-filled-name" style="color: #fff; font-size: 12px; margin-top: 2px;">${player.name}</div>
-            <div class="player-filled-season" style="color: #aaa; font-size: 10px;">${player.season}</div>
-        `;
-    }
-
-    updateSquadStats();
-}
 
 window.removePlayerFromSlot = function(slotId, e) {
     if (e) e.stopPropagation();
@@ -450,34 +424,101 @@ window.removePlayerFromSlot = function(slotId, e) {
     updateSquadStats();
 };
 
+// Thay đổi hàm Đổ dữ liệu cầu thủ vào Thẻ Sân bóng (selectPlayerForSlot)
+function selectPlayerForSlot(slotId, player) {
+    if (!slotId) return;
+    squadState[slotId] = player;
+
+    const slotElem = document.querySelector(`.squad-card-slot[data-slot-id="${slotId}"]`);
+    if (!slotElem) return;
+
+    const plusBox = slotElem.querySelector(".plus-box");
+    const cardContent = slotElem.querySelector(".card-content");
+
+    if (plusBox) plusBox.style.display = "none";
+
+    if (cardContent) {
+        // Tối ưu hóa kích thước hiển thị ảnh & thẻ cho vừa vặn với sân bóng 3D mới
+        const avatarImg = player.avatar_url ? `<img src="${player.avatar_url}" style="width:36px; height:36px; object-fit:contain; display:block; margin: 0 auto;">` : '';
+
+        cardContent.innerHTML = `
+            <div class="btn-remove-player" onclick="removePlayerFromSlot('${slotId}', event)" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 10px; line-height: 14px; text-align: center; cursor: pointer; font-weight: bold; z-index: 10;">&times;</div>
+            <div class="player-filled-ovr" style="color: #fbbf24; font-weight: bold; font-size: 11px; margin-top: 2px;">${player.ovr}</div>
+            ${avatarImg}
+            <div class="player-filled-name" style="color: #fff; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; margin-top: 1px;">${player.name}</div>
+            <div class="player-filled-season" style="color: #fbbf24; font-size: 8px; font-weight: bold;">${player.season}</div>
+        `;
+    }
+
+    updateSquadStats();
+}
+
+// Hàm cập nhật Thông số cả đội & Danh sách bên phải (updateSquadStats)
 function updateSquadStats() {
-    let totalValue = 0;
     let totalSalary = 0;
-    let totalHeight = 0;
+    let totalOvr = 0;
     let count = 0;
 
-    Object.values(squadState).forEach(p => {
+    const squadListPlayers = document.getElementById("squad-list-players");
+    if (squadListPlayers) squadListPlayers.innerHTML = "";
+
+    Object.entries(squadState).forEach(([slotId, p]) => {
         if (p) {
             totalSalary += Number(p.salary) || 0;
-            totalHeight += Number(p.height) || 180;
+            totalOvr += Number(p.ovr) || 0; // Cộng dồn OVR thật
             count++;
+
+            // RENDER DANH SÁCH BÊN PHẢI
+            if (squadListPlayers) {
+                const playerRow = document.createElement("div");
+                playerRow.style.cssText = "display: grid; grid-template-columns: 1fr 3fr 1fr 1fr 1fr; align-items: center; background: #1c2a35; padding: 6px; border-radius: 4px; font-size: 12px; border-left: 3px solid #fbbf24;";
+                playerRow.innerHTML = `
+                    <div style="font-weight: bold; color: #94a3b8;">${slotId}</div>
+                    <div style="font-weight: bold; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.name} <span style="font-size: 10px; color:#fbbf24;">[${p.season}]</span></div>
+                    <div style="text-align: center; color: #fbbf24; font-weight: bold;">${p.salary}</div>
+                    <div style="text-align: center; font-weight: bold; color: #fff;">${p.ovr}</div>
+                    <div style="text-align: center; color: #94a3b8;">+1</div>
+                `;
+                squadListPlayers.appendChild(playerRow);
+            }
         }
     });
 
-    const avgHeight = count > 0 ? Math.round(totalHeight / count) : 0;
+    // Nếu chưa có ai trên sân
+    if (count === 0 && squadListPlayers) {
+        squadListPlayers.innerHTML = `<div style="text-align: center; color: #475569; font-size: 12px; margin-top: 50px;">Chưa có cầu thủ nào trên sân.</div>`;
+    }
 
-    const elValue = document.getElementById("stat-value");
-    const elHeight = document.getElementById("stat-height");
+    // TÍNH TOÁN OVR TRUNG BÌNH
+    const avgOvr = count > 0 ? Math.round(totalOvr / count) : 0;
+    
+    // GẮN SỐ LIỆU LÊN GIAO DIỆN HTML
+    const elTeamOvr = document.getElementById("team-ovr");
+    const elTeamCount = document.getElementById("team-count");
     const elCurrSalary = document.getElementById("curr-salary");
-    const elCtrlSalary = document.getElementById("ctrl-salary");
-    const elCount = document.getElementById("stat-count");
 
-    if (elValue) elValue.innerText = totalValue > 0 ? totalValue.toLocaleString() + " đ" : "0 đ";
-    if (elHeight) elHeight.innerText = avgHeight + " cm";
-    if (elCurrSalary) elCurrSalary.innerText = totalSalary;
-    if (elCtrlSalary) elCtrlSalary.innerText = totalSalary;
-    if (elCount) elCount.innerText = count;
+    if (elTeamOvr) elTeamOvr.innerText = String(avgOvr).padStart(3, '0');
+    if (elTeamCount) elTeamCount.innerText = count;
+
+    if (elCurrSalary) {
+        elCurrSalary.innerText = String(totalSalary).padStart(3, '0');
+        // Đổi màu đỏ nếu vượt lương
+        if (totalSalary > 300) {
+            elCurrSalary.style.color = "#ef4444";
+        } else {
+            elCurrSalary.style.color = "#fbbf24";
+        }
+    }
 }
+
+// Bổ sung nút Reset toàn bộ đội hình
+document.getElementById("btn-reset-squad")?.addEventListener("click", () => {
+    if (confirm("🔄 Bạn có chắc muốn xóa tất cả cầu thủ hiện tại trên sân bóng để làm lại từ đầu?")) {
+        Object.keys(squadState).forEach(slotId => {
+            removePlayerFromSlot(slotId);
+        });
+    }
+});
 
 // Bắt sự kiện double-click vào dấu chấm bí mật
 document.addEventListener('DOMContentLoaded', function() {

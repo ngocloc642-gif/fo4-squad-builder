@@ -17,12 +17,12 @@
             <a href="#" class="nav-item">📈 Ranking</a>
         </div>
         <!-- Cụm thông tin User và Nút đăng xuất trên Header -->
-<div id="user-info-header" style="display: flex; align-items: center; gap: 12px; margin-left: 20px; padding-left: 20px; border-left: 2px solid rgba(255, 255, 255, 0.2);">
-    <span id="user-display-name" style="color: #ffd700; font-size: 15px; font-weight: bold; text-shadow: 1px 1px 2px #000;"></span>
-    <button id="btn-logout" style="display: none; background: #dc3545; color: #fff; border: 1px solid #b02a37; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: 0.2s;">
-        Đăng xuất
-    </button>
-</div>
+        <div id="user-info-header" style="display: flex; align-items: center; gap: 12px; margin-left: 20px; padding-left: 20px; border-left: 2px solid rgba(255, 255, 255, 0.2);">
+            <span id="user-display-name" style="color: #ffd700; font-size: 15px; font-weight: bold; text-shadow: 1px 1px 2px #000;"></span>
+            <button id="btn-logout" style="display: none; background: #dc3545; color: #fff; border: 1px solid #b02a37; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: 0.2s;">
+                Đăng xuất
+            </button>
+        </div>
     </header>
 
     <div class="container">
@@ -34,7 +34,7 @@
                     <button type="button" class="btn-search" id="btn-apply-filter">🔍 Tìm kiếm</button>
                     <button type="button" class="btn-reset" id="btn-reset-filter">🔄 Tạo lại</button>
                 </div>
-               <div class="filter-group">
+                <div class="filter-group">
                     <label>Vị trí:</label>
                     <div class="pos-group" id="pos-group" style="display: flex; flex-wrap: wrap; gap: 6px;">
                         <button class="btn-pos" data-pos="ST">ST</button>
@@ -61,7 +61,6 @@
                     </div>
                 </div>
 
-
                 <div class="filter-grid">
                     <div class="filter-item">
                         <label>OVR:</label>
@@ -81,129 +80,197 @@
             <h2 style="margin: 20px 0 10px 0;">Danh sách Cầu Thủ</h2>
             <div id="player-list" class="player-grid"></div>
         </div>
-    </div>
 
         <!-- ================= TAB 2: XÂY DỰNG ĐỘI HÌNH ================= -->
-        <div id="view-squad" style="display: none;">
-            <h2 class="squad-header-title">Xây dựng đội hình</h2>
-
-            <!-- Bảng Thống Kê 3 Ô Trắng (Đã thu gọn) -->
-            <div class="squad-stats-bar" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 550px; margin: 0 auto 25px auto;">
-                <div class="stat-card" style="background: #fff; color: #000; padding: 10px 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
-                    <div class="stat-title" style="font-size: 12px; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Chiều cao TB</div>
-                    <div class="stat-value" id="stat-height" style="font-size: 18px; font-weight: 900;">0 cm</div>
-                </div>
-                <div class="stat-card" style="background: #fff; color: #000; padding: 10px 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
-                    <div class="stat-title" style="font-size: 12px; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Lương</div>
-                    <div class="stat-value" id="stat-salary" style="font-size: 18px; font-weight: 900;"><span id="curr-salary">0</span>/305</div>
-                </div>
-                <div class="stat-card" style="background: #fff; color: #000; padding: 10px 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
-                    <div class="stat-title" style="font-size: 12px; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Số cầu thủ</div>
-                    <div class="stat-value" id="stat-count" style="font-size: 18px; font-weight: 900;">0</div>
-                </div>
+        <div id="view-squad" style="display: none; background: #121b22; color: #fff; padding: 15px; font-family: 'Segoe UI', Arial, sans-serif;">
+    
+            <!-- HEADER & NÚT RESET -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #233441; padding-bottom: 10px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #a2b4c1; letter-spacing: 1px;">⚽ FO4SQUADBUILDER</h2>
+                <button id="btn-reset-squad" style="background: #202b36; border: 1px solid #3d4f5e; color: #a2b4c1; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; text-transform: uppercase;">
+                    ✖ SQUAD RESET
+                </button>
             </div>
 
-            <!-- Thanh Đội hình & Lương -->
-            <div class="squad-controls-bar">
-                <div class="salary-pill">Lương: <span id="ctrl-salary">0</span>/305</div>
-                <div class="formation-select-wrap">
-                    <label>Đội hình:</label>
-                    <select id="formation-select">
-                        <option value="433">4-3-3</option>
-                    </select>
+            <!-- KHU VỰC THÔNG TIN & SÂN BÓNG (GRID 2 CỘT) -->
+            <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px; max-width: 1300px; margin: 0 auto;">
+                
+                <!-- CỘT TRÁI: CHỈ SỐ & SÂN BÓNG -->
+                <div>
+                    <!-- BẢNG CHỈ SỐ & LƯƠNG (Đã sửa lại với dữ liệu thật 3 ô cân đối) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; background: #0c1216; padding: 10px; border-radius: 4px; border: 1px solid #1a252f; margin-bottom: 15px;">
+                        <!-- OVR Trung bình -->
+                        <div style="background: #141b21; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px 0; border-radius: 4px;">
+                            <div style="font-size: 11px; color: #8fa0ac; font-weight: bold; margin-bottom: 4px;">OVR TRUNG BÌNH</div>
+                            <div id="team-ovr" style="font-size: 28px; font-weight: bold; font-family: monospace; color: #3b82f6;">000</div>
+                        </div>
+                        <!-- Số cầu thủ -->
+                        <div style="background: #141b21; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px 0; border-radius: 4px; border-left: 1px solid #1e2936;">
+                            <div style="font-size: 11px; color: #8fa0ac; font-weight: bold; margin-bottom: 4px;">SỐ CẦU THỦ</div>
+                            <div style="font-size: 28px; font-weight: bold; font-family: monospace; color: #e5e7eb;">
+                                <span id="team-count">0</span><span style="font-size: 14px; color: #6b7280;">/11</span>
+                            </div>
+                        </div>
+                        <!-- Lương -->
+                        <div style="background: #141b21; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px 0; border-radius: 4px; border-left: 1px solid #1e2936;">
+                            <div style="font-size: 11px; color: #8fa0ac; font-weight: bold; margin-bottom: 4px;">TỔNG LƯƠNG</div>
+                            <div style="font-size: 28px; font-weight: bold; font-family: monospace; color: #fbbf24;">
+                                <span id="curr-salary">000</span><span style="font-size: 14px; color: #6b7280;">/300</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MENU ĐỘI HÌNH & LEVEL -->
+                    <div style="display: flex; gap: 15px; font-size: 12px; margin-bottom: 10px;">
+                        <div style="background: #111a21; border: 1px solid #1a2731; padding: 4px 10px; border-radius: 3px;">
+                            ▼ FORMATIONS <span style="color:#fbbf24; font-weight:bold;">4231</span>
+                        </div>
+                        <div style="background: #111a21; border: 1px solid #1a2731; padding: 4px 10px; border-radius: 3px;">
+                            ▼ BONUS <span style="color:#fbbf24; font-weight:bold;">6</span>
+                        </div>
+                        <div style="background: #111a21; border: 1px solid #1a2731; padding: 4px 10px; border-radius: 3px;">
+                            ▼ LV. <span style="color:#fbbf24; font-weight:bold;">5</span>
+                        </div>
+                    </div>
+
+                    <!-- SÂN BÓNG 3D NGHIÊNG -->
+                    <div style="background: #17242c; border-radius: 6px; overflow: hidden; border: 1px solid #233441; position: relative;">
+                        <!-- Nền sân cỏ vẽ bằng CSS -->
+                        <div id="field-3d" style="height: 520px; background: radial-gradient(circle, #2e5114 40%, #1a320a 100%); position: relative; padding: 20px; box-sizing: border-box;">
+                            <!-- Vạch kẻ sân bóng -->
+                            <div style="position: absolute; top: 10%; bottom: 10%; left: 10%; right: 10%; border: 2px solid rgba(255,255,255,0.08); border-radius: 4px; pointer-events: none;"></div>
+                            <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 2px; background: rgba(255,255,255,0.08); pointer-events: none;"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; border: 2px solid rgba(255,255,255,0.08); border-radius: 50%; pointer-events: none;"></div>
+
+                            <!-- Bố cục các thẻ cầu thủ (4-2-3-1) -->
+                            <!-- Tiền đạo ST -->
+                            <div style="position: absolute; top: 6%; left: 50%; transform: translateX(-50%);">
+                                <div class="squad-card-slot" data-slot-id="ST" data-pos="ST" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">ST</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+
+                            <!-- Tiền vệ hộ công (LAM, CAM, RAM) -->
+                            <div style="position: absolute; top: 25%; left: 24%;">
+                                <div class="squad-card-slot" data-slot-id="LAM" data-pos="LAM" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">LAM</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; top: 25%; left: 50%; transform: translateX(-50%);">
+                                <div class="squad-card-slot" data-slot-id="CAM" data-pos="CAM" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">CAM</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; top: 25%; right: 24%;">
+                                <div class="squad-card-slot" data-slot-id="RAM" data-pos="RAM" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">RAM</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+
+                            <!-- Tiền vệ phòng ngự (LDM, RDM) -->
+                            <div style="position: absolute; top: 48%; left: 35%;">
+                                <div class="squad-card-slot" data-slot-id="LDM" data-pos="LDM" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">LDM</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; top: 48%; right: 35%;">
+                                <div class="squad-card-slot" data-slot-id="RDM" data-pos="RDM" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">RDM</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+
+                            <!-- Hàng hậu vệ (LB, LCB, RCB, RB) -->
+                            <div style="position: absolute; top: 64%; left: 10%;">
+                                <div class="squad-card-slot" data-slot-id="LB" data-pos="LB" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">LB</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; top: 67%; left: 30%;">
+                                <div class="squad-card-slot" data-slot-id="LCB" data-pos="LCB" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">LCB</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; top: 67%; right: 30%;">
+                                <div class="squad-card-slot" data-slot-id="RCB" data-pos="RCB" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">RCB</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; top: 64%; right: 10%;">
+                                <div class="squad-card-slot" data-slot-id="RB" data-pos="RB" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">RB</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+
+                            <!-- Thủ môn GK -->
+                            <div style="position: absolute; bottom: 3%; left: 50%; transform: translateX(-50%);">
+                                <div class="squad-card-slot" data-slot-id="GK" data-pos="GK" style="width: 70px; height: 95px; background: #1a2127; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; display: block; margin-top: 5px;">GK</span>
+                                    <div class="plus-box" style="font-size: 24px; color: #64748b; margin-top: 10px;">+</div>
+                                    <div class="card-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="level-badge">LV 5</div>
-            </div>
 
-            <!-- Khối Sân Bóng 3D Góc Nhìn FO4 -->
-            <div class="tactical-pitch-wrapper">
-                <div class="tactical-pitch">
-                    <!-- Hàng Tiền Đạo (Red +) -->
-                    <div class="pitch-row row-fw">
-                        <div class="squad-card-slot" data-slot-id="LW" data-pos="LW">
-                            <span class="pos-tag">LW</span>
-                            <div class="plus-box red-plus">+</div>
-                            <div class="card-content"></div>
+                <!-- CỘT PHẢI: CHI TIẾT DANH SÁCH & HÀNG DỰ BỊ -->
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <!-- BẢNG DANH SÁCH CẦU THỦ ĐÃ CHỌN -->
+                    <div style="background: #17242c; border: 1px solid #233441; border-radius: 6px; padding: 15px; flex-grow: 1; display: flex; flex-direction: column;">
+                        <div style="display: grid; grid-template-columns: 1fr 3fr 1fr 1fr 1fr; border-bottom: 2px solid #fbbf24; padding-bottom: 5px; font-size: 11px; font-weight: bold; color: #a2b4c1; text-transform: uppercase;">
+                            <div>POS</div>
+                            <div>TÊN CẦU THỦ</div>
+                            <div style="text-align: center;">LƯƠNG</div>
+                            <div style="text-align: center;">OVR</div>
+                            <div style="text-align: center;">GRADE</div>
                         </div>
-                        <div class="squad-card-slot" data-slot-id="ST" data-pos="ST">
-                            <span class="pos-tag">ST</span>
-                            <div class="plus-box red-plus">+</div>
-                            <div class="card-content"></div>
-                        </div>
-                        <div class="squad-card-slot" data-slot-id="RW" data-pos="RW">
-                            <span class="pos-tag">RW</span>
-                            <div class="plus-box red-plus">+</div>
-                            <div class="card-content"></div>
+                        <!-- Vùng đổ dữ liệu cầu thủ -->
+                        <div id="squad-list-players" style="flex-grow: 1; overflow-y: auto; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Sẽ được Render bằng JS -->
+                            <div style="text-align: center; color: #475569; font-size: 12px; margin-top: 50px;">Chưa có cầu thủ nào trên sân.</div>
                         </div>
                     </div>
 
-                    <!-- Hàng Tiền Vệ (Green +) -->
-                    <div class="pitch-row row-mf">
-                        <div class="squad-card-slot" data-slot-id="LCM" data-pos="LCM">
-                            <span class="pos-tag">LCM</span>
-                            <div class="plus-box green-plus">+</div>
-                            <div class="card-content"></div>
+                    <!-- KHU VỰC CẦU THỦ DỰ BỊ (SUBSTITUTES) -->
+                    <div style="background: #17242c; border: 1px solid #233441; border-radius: 6px; padding: 15px;">
+                        <div style="font-size: 11px; font-weight: bold; color: #a2b4c1; border-bottom: 2px solid #fbbf24; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase;">
+                            SUBSTITUTES (DỰ BỊ)
                         </div>
-                        <div class="squad-card-slot" data-slot-id="CM" data-pos="CM">
-                            <span class="pos-tag">CM</span>
-                            <div class="plus-box green-plus">+</div>
-                            <div class="card-content"></div>
-                        </div>
-                        <div class="squad-card-slot" data-slot-id="RCM" data-pos="RCM">
-                            <span class="pos-tag">RCM</span>
-                            <div class="plus-box green-plus">+</div>
-                            <div class="card-content"></div>
-                        </div>
-                    </div>
-
-                    <!-- Hàng Hậu Vệ (Blue +) -->
-                    <div class="pitch-row row-df">
-                        <div class="squad-card-slot" data-slot-id="LB" data-pos="LB">
-                            <span class="pos-tag">LB</span>
-                            <div class="plus-box blue-plus">+</div>
-                            <div class="card-content"></div>
-                        </div>
-                        <div class="squad-card-slot" data-slot-id="LCB" data-pos="LCB">
-                            <span class="pos-tag">LCB</span>
-                            <div class="plus-box blue-plus">+</div>
-                            <div class="card-content"></div>
-                        </div>
-                        <div class="squad-card-slot" data-slot-id="RCB" data-pos="RCB">
-                            <span class="pos-tag">RCB</span>
-                            <div class="plus-box blue-plus">+</div>
-                            <div class="card-content"></div>
-                        </div>
-                        <div class="squad-card-slot" data-slot-id="RB" data-pos="RB">
-                            <span class="pos-tag">RB</span>
-                            <div class="plus-box blue-plus">+</div>
-                            <div class="card-content"></div>
-                        </div>
-                    </div>
-
-                    <!-- Thủ Môn (Yellow +) -->
-                    <div class="pitch-row row-gk">
-                        <div class="squad-card-slot" data-slot-id="GK" data-pos="GK">
-                            <span class="pos-tag">GK</span>
-                            <div class="plus-box yellow-plus">+</div>
-                            <div class="card-content"></div>
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;">
+                            <div class="squad-card-slot bench-slot" data-slot-id="SUB1" data-pos="SUB" style="aspect-ratio: 3/4; background: #111a21; border: 1px dashed #2e3e4c; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #475569;">+</div>
+                            <div class="squad-card-slot bench-slot" data-slot-id="SUB2" data-pos="SUB" style="aspect-ratio: 3/4; background: #111a21; border: 1px dashed #2e3e4c; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #475569;">+</div>
+                            <div class="squad-card-slot bench-slot" data-slot-id="SUB3" data-pos="SUB" style="aspect-ratio: 3/4; background: #111a21; border: 1px dashed #2e3e4c; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #475569;">+</div>
+                            <div class="squad-card-slot bench-slot" data-slot-id="SUB4" data-pos="SUB" style="aspect-ratio: 3/4; background: #111a21; border: 1px dashed #2e3e4c; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #475569;">+</div>
+                            <div class="squad-card-slot bench-slot" data-slot-id="SUB5" data-pos="SUB" style="aspect-ratio: 3/4; background: #111a21; border: 1px dashed #2e3e4c; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #475569;">+</div>
+                            <div class="squad-card-slot bench-slot" data-slot-id="SUB6" data-pos="SUB" style="aspect-ratio: 3/4; background: #111a21; border: 1px dashed #2e3e4c; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #475569;">+</div>
+                            <div class="squad-card-slot bench-slot" data-slot-id="SUB7" data-pos="SUB" style="aspect-ratio: 3/4; background: #111a21; border: 1px dashed #2e3e4c; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #475569;">+</div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Cầu Thủ Dự Bị (Bench) -->
-            <div class="bench-container">
-                <div class="bench-grid">
-                    <div class="squad-card-slot bench-slot" data-slot-id="SUB1" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
-                    <div class="squad-card-slot bench-slot" data-slot-id="SUB2" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
-                    <div class="squad-card-slot bench-slot" data-slot-id="SUB3" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
-                    <div class="squad-card-slot bench-slot" data-slot-id="SUB4" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
-                    <div class="squad-card-slot bench-slot" data-slot-id="SUB5" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
-                    <div class="squad-card-slot bench-slot" data-slot-id="SUB6" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
-                    <div class="squad-card-slot bench-slot" data-slot-id="SUB7" data-pos="SUB"><div class="plus-box white-plus">+</div><div class="card-content"></div></div>
-                </div>
             </div>
         </div>
+
     </div>
 
     <!-- ================= MODAL CHỌN CẦU THỦ ================= -->
@@ -221,52 +288,54 @@
     </div>
     <script src="seasons.js"></script>
     <script src="app.js"></script>
+    
     <!-- Modal Đăng nhập / Đăng ký -->
-<div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-    <div style="background: #222; padding: 25px; border-radius: 8px; border: 1px solid #444; width: 350px; color: #fff; position: relative;">
-        <span id="btn-close-auth-modal" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; color: #aaa;">&times;</span>
-        
-        <!-- Form Đăng Nhập -->
-        <div id="form-login-box">
-            <h3 style="margin-top: 0; text-align: center; color: #00ffcc;">ĐĂNG NHẬP</h3>
-            <p style="font-size: 13px; color: #ccc; text-align: center;">Bạn cần đăng nhập để sử dụng tính năng Xây dựng Đội hình</p>
-            <div style="margin-bottom: 12px;">
-                <label style="font-size: 12px; color: #aaa;">Tên đăng nhập:</label>
-                <input type="text" id="login-username" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+    <div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: #222; padding: 25px; border-radius: 8px; border: 1px solid #444; width: 350px; color: #fff; position: relative;">
+            <span id="btn-close-auth-modal" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; color: #aaa;">&times;</span>
+            
+            <!-- Form Đăng Nhập -->
+            <div id="form-login-box">
+                <h3 style="margin-top: 0; text-align: center; color: #00ffcc;">ĐĂNG NHẬP</h3>
+                <p style="font-size: 13px; color: #ccc; text-align: center;">Bạn cần đăng nhập để sử dụng tính năng Xây dựng Đội hình</p>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; color: #aaa;">Tên đăng nhập:</label>
+                    <input type="text" id="login-username" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 12px; color: #aaa;">Mật khẩu:</label>
+                    <input type="password" id="login-password" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                </div>
+                <button id="btn-submit-login" style="width: 100%; padding: 10px; background: #00ffcc; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Đăng Nhập</button>
+                <p style="font-size: 12px; text-align: center; margin-top: 12px; color: #aaa;">Chưa có tài khoản? <a href="#" id="link-show-register" style="color: #00ffcc;">Đăng ký ngay</a></p>
             </div>
-            <div style="margin-bottom: 15px;">
-                <label style="font-size: 12px; color: #aaa;">Mật khẩu:</label>
-                <input type="password" id="login-password" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
-            </div>
-            <button id="btn-submit-login" style="width: 100%; padding: 10px; background: #00ffcc; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Đăng Nhập</button>
-            <p style="font-size: 12px; text-align: center; margin-top: 12px; color: #aaa;">Chưa có tài khoản? <a href="#" id="link-show-register" style="color: #00ffcc;">Đăng ký ngay</a></p>
-        </div>
 
-        <!-- Form Đăng Ký -->
-        <div id="form-register-box" style="display: none;">
-            <h3 style="margin-top: 0; text-align: center; color: #ffd700;">ĐĂNG KÝ TÀI KHOẢN</h3>
-            <div style="margin-bottom: 12px;">
-                <label style="font-size: 12px; color: #aaa;">Họ và tên:</label>
-                <input type="text" id="reg-fullname" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+            <!-- Form Đăng Ký -->
+            <div id="form-register-box" style="display: none;">
+                <h3 style="margin-top: 0; text-align: center; color: #ffd700;">ĐĂNG KÝ TÀI KHOẢN</h3>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; color: #aaa;">Họ và tên:</label>
+                    <input type="text" id="reg-fullname" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; color: #aaa;">Tên đăng nhập:</label>
+                    <input type="text" id="reg-username" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 12px; color: #aaa;">Mật khẩu:</label>
+                    <input type="password" id="reg-password" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                </div>
+                <button id="btn-submit-register" style="width: 100%; padding: 10px; background: #ffd700; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Tạo Tài Khoản</button>
+                <p style="font-size: 12px; text-align: center; margin-top: 12px; color: #aaa;">Đã có tài khoản? <a href="#" id="link-show-login" style="color: #ffd700;">Đăng nhập</a></p>
             </div>
-            <div style="margin-bottom: 12px;">
-                <label style="font-size: 12px; color: #aaa;">Tên đăng nhập:</label>
-                <input type="text" id="reg-username" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label style="font-size: 12px; color: #aaa;">Mật khẩu:</label>
-                <input type="password" id="reg-password" style="width: 100%; padding: 8px; margin-top: 4px; background: #111; border: 1px solid #444; color: #fff; border-radius: 4px;">
-            </div>
-            <button id="btn-submit-register" style="width: 100%; padding: 10px; background: #ffd700; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Tạo Tài Khoản</button>
-            <p style="font-size: 12px; text-align: center; margin-top: 12px; color: #aaa;">Đã có tài khoản? <a href="#" id="link-show-login" style="color: #ffd700;">Đăng nhập</a></p>
         </div>
     </div>
-</div>
-<footer class="site-footer">
-    <p style="text-align: center; margin-top: 50px; color: #666; font-size: 14px;">
-        &copy; 2026 FC Online Squad Builder. All rights reserved<span style="user-select: none; -webkit-user-select: none; cursor: default;" ondblclick="window.location.href='admin_login.html'">.</span>
-    </p>
-</footer>
+    
+    <footer class="site-footer">
+        <p style="text-align: center; margin-top: 50px; color: #666; font-size: 14px;">
+            &copy; 2026 FC Online Squad Builder. All rights reserved<span style="user-select: none; -webkit-user-select: none; cursor: default;" ondblclick="window.location.href='admin_login.html'">.</span>
+        </p>
+    </footer>
 
 </body>
 </html>
