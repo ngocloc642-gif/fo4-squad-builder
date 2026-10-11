@@ -87,23 +87,19 @@
         <div id="view-squad" style="display: none;">
             <h2 class="squad-header-title">Xây dựng đội hình</h2>
 
-            <!-- Bảng Thống Kê 4 Ô Trắng -->
-            <div class="squad-stats-bar">
-                <div class="stat-card">
-                    <div class="stat-title">Giá trị CLB</div>
-                    <div class="stat-value" id="stat-value">0 đ</div>
+            <!-- Bảng Thống Kê 3 Ô Trắng (Đã thu gọn) -->
+            <div class="squad-stats-bar" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 550px; margin: 0 auto 25px auto;">
+                <div class="stat-card" style="background: #fff; color: #000; padding: 10px 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                    <div class="stat-title" style="font-size: 12px; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Chiều cao TB</div>
+                    <div class="stat-value" id="stat-height" style="font-size: 18px; font-weight: 900;">0 cm</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-title">Chiều cao TB</div>
-                    <div class="stat-value" id="stat-height">0 cm</div>
+                <div class="stat-card" style="background: #fff; color: #000; padding: 10px 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                    <div class="stat-title" style="font-size: 12px; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Lương</div>
+                    <div class="stat-value" id="stat-salary" style="font-size: 18px; font-weight: 900;"><span id="curr-salary">0</span>/305</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-title">Lương</div>
-                    <div class="stat-value" id="stat-salary"><span id="curr-salary">0</span>/305</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Số cầu thủ</div>
-                    <div class="stat-value" id="stat-count">0</div>
+                <div class="stat-card" style="background: #fff; color: #000; padding: 10px 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                    <div class="stat-title" style="font-size: 12px; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">Số cầu thủ</div>
+                    <div class="stat-value" id="stat-count" style="font-size: 18px; font-weight: 900;">0</div>
                 </div>
             </div>
 
