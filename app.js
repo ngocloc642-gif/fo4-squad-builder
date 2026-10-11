@@ -193,6 +193,10 @@ function setupEventListeners() {
         const fullname = document.getElementById("reg-fullname").value;
         const username = document.getElementById("reg-username").value;
         const password = document.getElementById("reg-password").value;
+        if (!password.includes('@')) {
+            alert("⚠️ Đăng ký thất bại: Mật khẩu bắt buộc phải chứa ký tự @ để bảo mật!");
+            return; // Lệnh return này giúp chặn đứng quá trình, không gửi dữ liệu lên server nữa
+        }
         try {
             const res = await fetch("register.php", {
                 method: "POST",
@@ -261,8 +265,7 @@ function setupEventListeners() {
         document.querySelectorAll(".badge-season").forEach(b => b.classList.remove("active"));
         renderSearchList(allPlayers);
     });
-
-    // --- MỞ POP-UP CHỌN CẦU THỦ KHI NHẤN DẤU + TRÊN SÂN ---
+// --- MỞ POP-UP CHỌN CẦU THỦ KHI NHẤN DẤU + TRÊN SÂN ---
     document.querySelectorAll(".squad-card-slot").forEach(slot => {
         slot.addEventListener("click", (e) => {
             if (e.target.classList.contains("btn-remove-player")) return;
@@ -275,29 +278,29 @@ function setupEventListeners() {
             const playerModal = document.getElementById("player-modal");
 
             if (modalTargetPos) modalTargetPos.innerText = posName;
-            if (modalSearchInput) modalSearchInput.value = "";
+            if (modalSearchInput) modalSearchInput.value = ""; // Xóa text cũ
 
-            renderModalPlayers(allPlayers);
+            // Dùng hàm lọc mới tạo để lấy danh sách cầu thủ hợp lệ
+            const availablePlayers = getAvailablePlayersForSlot(posName, "");
+            renderModalPlayers(availablePlayers);
+            
             if (playerModal) playerModal.style.display = "flex";
         });
     });
 
-    // --- ĐÓNG POP-UP MODAL ---
-    document.getElementById("btn-close-modal")?.addEventListener("click", () => {
-        const playerModal = document.getElementById("player-modal");
-        if (playerModal) playerModal.style.display = "none";
-    });
-
     // --- Ô TÌM KIẾM TRONG POP-UP MODAL ---
     document.getElementById("modal-search-input")?.addEventListener("input", (e) => {
-        const kw = e.target.value.toLowerCase();
-        const filtered = allPlayers.filter(p =>
-            (p.name && p.name.toLowerCase().includes(kw)) ||
-            (p.season && p.season.toLowerCase().includes(kw)) ||
-            (p.position && p.position.toLowerCase().includes(kw))
-        );
-        renderModalPlayers(filtered);
+        const kw = e.target.value.toLowerCase().trim();
+        
+        // Tìm xem ô đang được chọn (activeSlotId) có vị trí (pos) là gì
+        const activeSlotElem = document.querySelector(`.squad-card-slot[data-slot-id="${activeSlotId}"]`);
+        const posName = activeSlotElem ? (activeSlotElem.dataset.pos || activeSlotId) : "";
+
+        // Dùng hàm lọc truyền kèm từ khóa tìm kiếm
+        const availablePlayers = getAvailablePlayersForSlot(posName, kw);
+        renderModalPlayers(availablePlayers);
     });
+   
 }
 
 // Render danh sách ở Tab Tra Cứu
@@ -325,7 +328,36 @@ function renderSearchList(players) {
     });
 }
 
-// Render danh sách trong Pop-up
+// HÀM LỌC CẦU THỦ THÔNG MINH CHO MODAL
+function getAvailablePlayersForSlot(slotPos, keyword = "") {
+    // 1. Lấy danh sách TÊN các cầu thủ đang có sẵn trên sân
+    const currentSquadNames = Object.values(squadState)
+        .filter(p => p !== null && p !== undefined)
+        .map(p => p.name);
+
+    return allPlayers.filter(p => {
+        // Điều kiện 1: Khớp từ khóa tìm kiếm (nếu có)
+        const matchKw = keyword === "" || 
+                        (p.name && p.name.toLowerCase().includes(keyword)) ||
+                        (p.season && p.season.toLowerCase().includes(keyword));
+
+        // Điều kiện 2: KHÔNG được trùng tên với cầu thủ đã có trên sân
+        const notInSquad = !currentSquadNames.includes(p.name);
+
+        // Điều kiện 3: Ràng buộc vị trí Thủ Môn (GK)
+        let matchGK = true;
+        if (slotPos === "GK") {
+            // Nếu ô bấm vào là GK -> Chỉ hiện cầu thủ có vị trí GK
+            matchGK = (p.position && p.position.includes("GK"));
+        } else {
+            // Nếu ô bấm vào là các vị trí trên (ST, LW, CM...) -> Ẩn cầu thủ GK
+            matchGK = (!p.position || !p.position.includes("GK"));
+        }
+
+        // Cầu thủ phải thỏa mãn TẤT CẢ điều kiện trên mới được hiện ra
+        return matchKw && notInSquad && matchGK;
+    });
+}
 function renderModalPlayers(players) {
     const modalPlayerList = document.getElementById("modal-player-list");
     if (!modalPlayerList) return;
@@ -358,15 +390,32 @@ function renderModalPlayers(players) {
 
 function applySearchFilters() {
     const kw = document.getElementById("search-input")?.value.toLowerCase() || "";
+    
+    // Lấy giá trị bộ lọc OVR
     const minOvr = parseFloat(document.getElementById("min-ovr")?.value) || 0;
     const maxOvr = parseFloat(document.getElementById("max-ovr")?.value) || 999;
 
+    // Lấy giá trị bộ lọc Lương (Lưu ý: HTML của bạn đang dùng id="max-salary-input")
+    const minSalary = parseFloat(document.getElementById("min-salary")?.value) || 0;
+    const maxSalary = parseFloat(document.getElementById("max-salary-input")?.value) || 999;
+
+    // Lấy giá trị bộ lọc Giá tiền
+    const minPrice = parseFloat(document.getElementById("min-price")?.value) || 0;
+    const maxPrice = parseFloat(document.getElementById("max-price")?.value) || 9999999999999;
+
     const filtered = allPlayers.filter(p => {
+        // Kiểm tra Tên, Vị trí, Mùa thẻ
         const matchName = p.name ? p.name.toLowerCase().includes(kw) : false;
         const matchPos = !selectedPos || (p.position && p.position.includes(selectedPos));
         const matchSeason = !selectedSeason || p.season === selectedSeason;
+        
+        // Kiểm tra các con số (OVR, Lương, Giá)
         const matchOvr = p.ovr >= minOvr && p.ovr <= maxOvr;
-        return matchName && matchPos && matchSeason && matchOvr;
+        const matchSalary = p.salary >= minSalary && p.salary <= maxSalary;
+        const matchPrice = p.price >= minPrice && p.price <= maxPrice;
+        
+        // Chỉ giữ lại cầu thủ thỏa mãn TẤT CẢ các điều kiện trên
+        return matchName && matchPos && matchSeason && matchOvr && matchSalary && matchPrice;
     });
 
     renderSearchList(filtered);
