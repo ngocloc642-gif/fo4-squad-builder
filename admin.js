@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 2. LƯU / CẬP NHẬT DỮ LIỆU
+    // 2. LƯU / CẬP NHẬT DỮ LIỆU (Khớp 100% với HTML)
     // ==========================================
     document.getElementById('admin-form').addEventListener('submit', async (e) => {
         e.preventDefault(); 
@@ -63,7 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!seasonHiddenInput.value) { alert("Vui lòng chọn mùa thẻ!"); return; }
         if (!posHiddenInput.value) { alert("Vui lòng chọn vị trí!"); return; }
 
+        // Bắt chính xác các ID đang có trong file admin.html
         const id = document.getElementById('a-id').value;
+        
         const player = {
             id: id,
             name: document.getElementById('a-name').value,
@@ -71,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             position: posHiddenInput.value,
             ovr: document.getElementById('a-ovr').value,
             salary: document.getElementById('a-salary').value,
-            price: document.getElementById('a-price').value
+            avatar_url: document.getElementById('p-avatar').value // Riêng ảnh là p-avatar
         };
 
         const actionUrl = id ? 'admin_api.php?action=update' : 'admin_api.php?action=add';
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Lỗi kết nối đến máy chủ!');
         }
     });
-});
+}); // <--- Đóng thẻ DOMContentLoaded ở đây
 
 async function loadPlayers() {
     try {
@@ -104,12 +106,15 @@ async function loadPlayers() {
         adminPlayersList = await res.json(); 
         
         const tbody = document.getElementById('admin-table-body');
+        if(!tbody) return;
         tbody.innerHTML = ''; 
 
         adminPlayersList.forEach(p => {
+            const avatarImg = p.avatar_url ? `<img src="${p.avatar_url}" style="width:30px; height:30px; object-fit:contain; background:#333; border-radius:4px; margin-right:10px; vertical-align:middle;">` : '';
+
             tbody.innerHTML += `
                 <tr>
-                    <td><strong>${p.name}</strong></td>
+                    <td>${avatarImg}<strong>${p.name}</strong></td>
                     <td>${p.season}</td>
                     <td>${p.position}</td>
                     <td style="color:#ffd700; font-weight:bold;">${p.ovr}</td>
@@ -126,54 +131,67 @@ async function loadPlayers() {
     }
 }
 
-function editPlayer(id) {
+window.editPlayer = function(id) { 
     const p = adminPlayersList.find(player => player.id == id);
     if (!p) return;
 
+    // Đổ dữ liệu vào chính xác các ID trong HTML khi bấm Sửa
     document.getElementById('a-id').value = p.id;
     document.getElementById('a-name').value = p.name;
     document.getElementById('a-ovr').value = p.ovr;
     document.getElementById('a-salary').value = p.salary;
-    document.getElementById('a-price').value = p.price;
+    document.getElementById('p-avatar').value = p.avatar_url || ''; 
 
     const seasonHidden = document.getElementById('a-season');
     const seasonBox = document.querySelector("#season-selector .select-selected");
-    seasonHidden.value = p.season;
-    if (typeof FO4_SEASONS !== 'undefined') {
+    if (seasonHidden) seasonHidden.value = p.season;
+    if (typeof FO4_SEASONS !== 'undefined' && seasonBox) {
         const sData = FO4_SEASONS.find(s => s.id === p.season);
         seasonBox.innerHTML = sData ? `<img src="${sData.img}" width="25"> ${sData.name}` : p.season;
     }
 
     const posHidden = document.getElementById('a-pos');
     const posBox = document.querySelector("#pos-selector .select-selected");
-    posHidden.value = p.position;
+    if (posHidden) posHidden.value = p.position;
     if (posBox) posBox.innerHTML = p.position;
 
-    document.getElementById('btn-save').innerText = '🔄 Cập Nhật';
-    document.getElementById('btn-save').style.background = '#007bff';
-    document.getElementById('btn-cancel').style.display = 'block';
+    const btnSave = document.getElementById('btn-save');
+    if (btnSave) {
+        btnSave.innerText = '🔄 Cập Nhật';
+        btnSave.style.background = '#007bff';
+    }
+    const btnCancel = document.getElementById('btn-cancel');
+    if (btnCancel) btnCancel.style.display = 'block';
     
     window.scrollTo(0, 0);
-}
+};
 
-function cancelEdit() {
-    document.getElementById('admin-form').reset();
+window.cancelEdit = function() {
+    const form = document.getElementById('admin-form');
+    if (form) form.reset();
+    
     document.getElementById('a-id').value = '';
     
-    document.getElementById('a-season').value = '';
+    const seasonHidden = document.getElementById('a-season');
     const seasonBox = document.querySelector("#season-selector .select-selected");
+    if (seasonHidden) seasonHidden.value = '';
     if (seasonBox) seasonBox.innerHTML = 'Chọn mùa thẻ';
 
-    document.getElementById('a-pos').value = '';
+    const posHidden = document.getElementById('a-pos');
     const posBox = document.querySelector("#pos-selector .select-selected");
+    if (posHidden) posHidden.value = '';
     if (posBox) posBox.innerHTML = 'Chọn vị trí';
     
-    document.getElementById('btn-save').innerText = '➕ Thêm Cầu Thủ';
-    document.getElementById('btn-save').style.background = '#28a745';
-    document.getElementById('btn-cancel').style.display = 'none';
-}
+    const btnSave = document.getElementById('btn-save');
+    if (btnSave) {
+        btnSave.innerText = '➕ Thêm Cầu Thủ';
+        btnSave.style.background = '#28a745';
+    }
+    const btnCancel = document.getElementById('btn-cancel');
+    if (btnCancel) btnCancel.style.display = 'none';
+};
 
-async function deletePlayer(id) {
+window.deletePlayer = async function(id) {
     if (confirm("⚠️ Bạn có chắc chắn muốn xóa cầu thủ này không?")) {
         try {
             const res = await fetch(`admin_api.php?action=delete&id=${id}`);
@@ -187,4 +205,4 @@ async function deletePlayer(id) {
             alert('Lỗi khi xóa cầu thủ!');
         }
     }
-}
+};

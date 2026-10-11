@@ -34,11 +34,11 @@ function updateUIAuth() {
     }
 }
 
-// Tải dữ liệu cầu thủ từ CSDL qua api.php
+// Tải dữ liệu cầu thủ từ CSDL qua admin_api.php
 async function init() {
     try {
-        const response = await fetch("api.php");
-        if (!response.ok) throw new Error("Không thể lấy dữ liệu từ api.php");
+        const response = await fetch("admin_api.php?action=list");
+        if (!response.ok) throw new Error("Không thể lấy dữ liệu từ máy chủ");
         
         allPlayers = await response.json();
         console.log("Đã tải thành công database:", allPlayers);
@@ -48,18 +48,19 @@ async function init() {
     } catch (error) {
         console.error("Lỗi đọc dữ liệu database:", error);
     }
+    
     // Render bộ lọc mùa thẻ bên User
-const seasonContainer = document.getElementById('user-season-filter');
-if (seasonContainer && typeof FO4_SEASONS !== 'undefined') {
-    seasonContainer.innerHTML = ''; // Xóa sạch khung trước khi vẽ
-    FO4_SEASONS.forEach(s => {
-        seasonContainer.innerHTML += `
-            <span class="badge-season" data-season="${s.id}" style="display:inline-flex; align-items:center; gap:5px; cursor: pointer;">
-                <img src="${s.img}" style="width:25px; height:20px; object-fit:contain;"> ${s.name}
-            </span>
-        `;
-    });
-}
+    const seasonContainer = document.getElementById('user-season-filter');
+    if (seasonContainer && typeof FO4_SEASONS !== 'undefined') {
+        seasonContainer.innerHTML = ''; // Xóa sạch khung trước khi vẽ
+        FO4_SEASONS.forEach(s => {
+            seasonContainer.innerHTML += `
+                <span class="badge-season" data-season="${s.id}" style="display:inline-flex; align-items:center; gap:5px; cursor: pointer;">
+                    <img src="${s.img}" style="width:25px; height:20px; object-fit:contain;"> ${s.name}
+                </span>
+            `;
+        });
+    }
 }
 
 function setupEventListeners() {
@@ -124,27 +125,26 @@ function setupEventListeners() {
             position: document.getElementById("p-position")?.value || "",
             ovr: parseInt(document.getElementById("p-ovr")?.value) || 0,
             salary: parseInt(document.getElementById("p-salary")?.value) || 0,
-            price: parseInt(document.getElementById("p-price")?.value) || 0,
-            nationality: document.getElementById("p-nation")?.value || "",
-            avatar_url: document.getElementById("p-avatar")?.value || ""
+            avatar_url: document.getElementById("p-avatar")?.value || "" 
         };
 
         try {
-            const res = await fetch("admin_api.php", {
+            const res = await fetch("admin_api.php?action=add", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(playerData)
             });
 
             const result = await res.json();
-            if (result.success) {
+            if (result.status === "success") { 
                 alert("✅ " + result.message);
-                this.reset(); // Xóa trắng form sau khi lưu
-                init(); // Tải lại danh sách cầu thủ mới vào ứng dụng
+                this.reset(); 
+                init(); 
             } else {
                 alert("❌ Lỗi: " + result.message);
             }
         } catch (err) {
+            console.error("Lỗi chi tiết:", err);
             alert("❌ Lỗi kết nối máy chủ admin_api.php!");
         }
     });
@@ -182,7 +182,7 @@ function setupEventListeners() {
                 localStorage.setItem("currentUser", JSON.stringify(currentUser));
                 updateUIAuth();
                 document.getElementById("auth-modal").style.display = "none";
-                tabSquad.click(); // Đăng nhập xong nhảy thẳng sang giao diện Đội hình
+                tabSquad.click(); 
             } else {
                 alert(data.message);
             }
@@ -195,7 +195,7 @@ function setupEventListeners() {
         const password = document.getElementById("reg-password").value;
         if (!password.includes('@')) {
             alert("⚠️ Đăng ký thất bại: Mật khẩu bắt buộc phải chứa ký tự @ để bảo mật!");
-            return; // Lệnh return này giúp chặn đứng quá trình, không gửi dữ liệu lên server nữa
+            return; 
         }
         try {
             const res = await fetch("register.php", {
@@ -214,17 +214,16 @@ function setupEventListeners() {
         currentUser = null;
         updateUIAuth();
         alert("Đã đăng xuất!");
-        tabSearch.click(); // Đăng xuất xong đẩy về Tra Cứu
+        tabSearch.click(); 
     });
+
     // --- BỘ LỌC VỊ TRÍ (DẠNG NÚT BẤM) ---
     document.querySelectorAll(".btn-pos").forEach(btn => {
         btn.addEventListener("click", () => {
-            // Nếu bấm lại nút đang sáng -> Tắt chọn (Xem tất cả vị trí)
             if (btn.classList.contains("active")) {
                 btn.classList.remove("active");
                 selectedPos = "";
             } else {
-                // Tắt các nút khác, làm sáng nút vừa bấm
                 document.querySelectorAll(".btn-pos").forEach(b => b.classList.remove("active"));
                 btn.classList.add("active");
                 selectedPos = btn.dataset.pos || "";
@@ -233,24 +232,22 @@ function setupEventListeners() {
         });
     });
 
-// --- BỘ LỌC MÙA THẺ (EVENT DELEGATION) ---
+    // --- BỘ LỌC MÙA THẺ (EVENT DELEGATION) ---
     const filterContainer = document.getElementById('user-season-filter');
     if (filterContainer) {
         filterContainer.addEventListener("click", (e) => {
             const badge = e.target.closest(".badge-season");
-            if (!badge) return; // Không click trúng thẻ thì bỏ qua
+            if (!badge) return; 
 
-            // Nếu nút đang sáng mà bấm lại -> Tắt đi (Chế độ xem Tất cả)
             if (badge.classList.contains("active")) {
                 badge.classList.remove("active");
                 selectedSeason = "";
             } else {
-                // Tắt các nút khác, bật nút vừa bấm
                 document.querySelectorAll(".badge-season").forEach(b => b.classList.remove("active"));
                 badge.classList.add("active");
                 selectedSeason = badge.dataset.season || "";
             }
-            applySearchFilters(); // Lọc lại danh sách
+            applySearchFilters(); 
         });
     }
 
@@ -265,7 +262,8 @@ function setupEventListeners() {
         document.querySelectorAll(".badge-season").forEach(b => b.classList.remove("active"));
         renderSearchList(allPlayers);
     });
-// --- MỞ POP-UP CHỌN CẦU THỦ KHI NHẤN DẤU + TRÊN SÂN ---
+
+    // --- MỞ POP-UP CHỌN CẦU THỦ KHI NHẤN DẤU + TRÊN SÂN ---
     document.querySelectorAll(".squad-card-slot").forEach(slot => {
         slot.addEventListener("click", (e) => {
             if (e.target.classList.contains("btn-remove-player")) return;
@@ -278,9 +276,8 @@ function setupEventListeners() {
             const playerModal = document.getElementById("player-modal");
 
             if (modalTargetPos) modalTargetPos.innerText = posName;
-            if (modalSearchInput) modalSearchInput.value = ""; // Xóa text cũ
+            if (modalSearchInput) modalSearchInput.value = ""; 
 
-            // Dùng hàm lọc mới tạo để lấy danh sách cầu thủ hợp lệ
             const availablePlayers = getAvailablePlayersForSlot(posName, "");
             renderModalPlayers(availablePlayers);
             
@@ -292,15 +289,12 @@ function setupEventListeners() {
     document.getElementById("modal-search-input")?.addEventListener("input", (e) => {
         const kw = e.target.value.toLowerCase().trim();
         
-        // Tìm xem ô đang được chọn (activeSlotId) có vị trí (pos) là gì
         const activeSlotElem = document.querySelector(`.squad-card-slot[data-slot-id="${activeSlotId}"]`);
         const posName = activeSlotElem ? (activeSlotElem.dataset.pos || activeSlotId) : "";
 
-        // Dùng hàm lọc truyền kèm từ khóa tìm kiếm
         const availablePlayers = getAvailablePlayersForSlot(posName, kw);
         renderModalPlayers(availablePlayers);
     });
-   
 }
 
 // Render danh sách ở Tab Tra Cứu
@@ -316,13 +310,20 @@ function renderSearchList(players) {
 
     players.forEach(p => {
         const item = document.createElement("div");
-        item.style.cssText = "background: #222; padding: 12px; border-radius: 6px; border: 1px solid #444; margin-bottom: 8px;";
+        item.style.cssText = "background: #222; padding: 12px; border-radius: 6px; border: 1px solid #444; margin-bottom: 8px; display: flex; align-items: center; gap: 15px;";
+        
+        const avatarUrl = p.avatar_url ? p.avatar_url : "https://fo4.garena.vn/wp-content/uploads/2020/09/fo4-logo.png";
+
         item.innerHTML = `
-            <div style="font-weight: bold; color: #fff; font-size: 16px;">${p.name}</div>
-            <div style="font-size: 13px; color: #aaa;">Mùa thẻ: ${p.season}</div>
-            <div style="font-size: 13px; color: #ffd700;">OVR: ${p.ovr} | Vị trí: ${p.position || 'N/A'}</div>
-            <div style="font-size: 13px; color: #00ffcc;">Lương: ${p.salary}</div>
-            <div style="font-size: 13px; color: #ccc;">Giá: ${p.price ? Number(p.price).toLocaleString() : 'N/A'} đ</div>
+            <div style="flex-shrink: 0;">
+                <img src="${avatarUrl}" alt="Avatar" style="width: 60px; height: 60px; object-fit: contain; background: #333; border-radius: 4px;">
+            </div>
+            <div style="flex-grow: 1;">
+                <div style="font-weight: bold; color: #fff; font-size: 16px;">${p.name}</div>
+                <div style="font-size: 13px; color: #aaa;">Mùa thẻ: ${p.season}</div>
+                <div style="font-size: 13px; color: #ffd700;">OVR: ${p.ovr} | Vị trí: ${p.position || 'N/A'}</div>
+                <div style="font-size: 13px; color: #00ffcc;">Lương: ${p.salary}</div>
+            </div>
         `;
         container.appendChild(item);
     });
@@ -330,34 +331,28 @@ function renderSearchList(players) {
 
 // HÀM LỌC CẦU THỦ THÔNG MINH CHO MODAL
 function getAvailablePlayersForSlot(slotPos, keyword = "") {
-    // 1. Lấy danh sách TÊN các cầu thủ đang có sẵn trên sân
     const currentSquadNames = Object.values(squadState)
         .filter(p => p !== null && p !== undefined)
         .map(p => p.name);
 
     return allPlayers.filter(p => {
-        // Điều kiện 1: Khớp từ khóa tìm kiếm (nếu có)
         const matchKw = keyword === "" || 
                         (p.name && p.name.toLowerCase().includes(keyword)) ||
                         (p.season && p.season.toLowerCase().includes(keyword));
 
-        // Điều kiện 2: KHÔNG được trùng tên với cầu thủ đã có trên sân
         const notInSquad = !currentSquadNames.includes(p.name);
 
-        // Điều kiện 3: Ràng buộc vị trí Thủ Môn (GK)
         let matchGK = true;
         if (slotPos === "GK") {
-            // Nếu ô bấm vào là GK -> Chỉ hiện cầu thủ có vị trí GK
             matchGK = (p.position && p.position.includes("GK"));
         } else {
-            // Nếu ô bấm vào là các vị trí trên (ST, LW, CM...) -> Ẩn cầu thủ GK
             matchGK = (!p.position || !p.position.includes("GK"));
         }
 
-        // Cầu thủ phải thỏa mãn TẤT CẢ điều kiện trên mới được hiện ra
         return matchKw && notInSquad && matchGK;
     });
 }
+
 function renderModalPlayers(players) {
     const modalPlayerList = document.getElementById("modal-player-list");
     if (!modalPlayerList) return;
@@ -391,31 +386,22 @@ function renderModalPlayers(players) {
 function applySearchFilters() {
     const kw = document.getElementById("search-input")?.value.toLowerCase() || "";
     
-    // Lấy giá trị bộ lọc OVR
     const minOvr = parseFloat(document.getElementById("min-ovr")?.value) || 0;
     const maxOvr = parseFloat(document.getElementById("max-ovr")?.value) || 999;
 
-    // Lấy giá trị bộ lọc Lương (Lưu ý: HTML của bạn đang dùng id="max-salary-input")
     const minSalary = parseFloat(document.getElementById("min-salary")?.value) || 0;
     const maxSalary = parseFloat(document.getElementById("max-salary-input")?.value) || 999;
 
-    // Lấy giá trị bộ lọc Giá tiền
-    const minPrice = parseFloat(document.getElementById("min-price")?.value) || 0;
-    const maxPrice = parseFloat(document.getElementById("max-price")?.value) || 9999999999999;
-
     const filtered = allPlayers.filter(p => {
-        // Kiểm tra Tên, Vị trí, Mùa thẻ
         const matchName = p.name ? p.name.toLowerCase().includes(kw) : false;
         const matchPos = !selectedPos || (p.position && p.position.includes(selectedPos));
         const matchSeason = !selectedSeason || p.season === selectedSeason;
         
-        // Kiểm tra các con số (OVR, Lương, Giá)
         const matchOvr = p.ovr >= minOvr && p.ovr <= maxOvr;
         const matchSalary = p.salary >= minSalary && p.salary <= maxSalary;
-        const matchPrice = p.price >= minPrice && p.price <= maxPrice;
         
-        // Chỉ giữ lại cầu thủ thỏa mãn TẤT CẢ các điều kiện trên
-        return matchName && matchPos && matchSeason && matchOvr && matchSalary && matchPrice;
+        // ĐÃ XÓA BIẾN matchPrice BỊ LỖI Ở ĐÂY!
+        return matchName && matchPos && matchSeason && matchOvr && matchSalary;
     });
 
     renderSearchList(filtered);
@@ -434,10 +420,13 @@ function selectPlayerForSlot(slotId, player) {
     if (plusBox) plusBox.style.display = "none";
 
     if (cardContent) {
+        const avatarImg = player.avatar_url ? `<img src="${player.avatar_url}" style="width:40px; height:40px; object-fit:contain; display:block; margin: 0 auto;">` : '';
+
         cardContent.innerHTML = `
             <div class="btn-remove-player" onclick="removePlayerFromSlot('${slotId}', event)">&times;</div>
             <div class="player-filled-ovr" style="color: #ffd700; font-weight: bold;">${player.ovr}</div>
-            <div class="player-filled-name" style="color: #fff; font-size: 12px;">${player.name}</div>
+            ${avatarImg}
+            <div class="player-filled-name" style="color: #fff; font-size: 12px; margin-top: 2px;">${player.name}</div>
             <div class="player-filled-season" style="color: #aaa; font-size: 10px;">${player.season}</div>
         `;
     }
@@ -469,7 +458,6 @@ function updateSquadStats() {
 
     Object.values(squadState).forEach(p => {
         if (p) {
-            totalValue += Number(p.price) || 0;
             totalSalary += Number(p.salary) || 0;
             totalHeight += Number(p.height) || 180;
             count++;
@@ -490,14 +478,32 @@ function updateSquadStats() {
     if (elCtrlSalary) elCtrlSalary.innerText = totalSalary;
     if (elCount) elCount.innerText = count;
 }
+
 // Bắt sự kiện double-click vào dấu chấm bí mật
 document.addEventListener('DOMContentLoaded', function() {
     const secretDot = document.getElementById('secret-admin');
     
     if (secretDot) {
         secretDot.addEventListener('dblclick', function() {
-            // Khi click đúp thành công, chuyển hướng người dùng sang trang quản trị
             window.location.href = 'admin.html';
         });
+    }
+});
+
+// =======================================================
+// FIX LỖI NÚT X VÀ THÊM TÍNH NĂNG NHẤN RA NGOÀI ĐỂ ĐÓNG
+// =======================================================
+document.addEventListener("click", function(e) {
+    const modal = document.getElementById("player-modal");
+    if (!modal || modal.style.display === "none") return;
+
+    // 1. Nếu người dùng bấm vào nút X (nhận diện qua text hoặc class)
+    if (e.target.innerText === "x" || e.target.innerText === "×" || e.target.innerText === "X" || (e.target.className && typeof e.target.className === 'string' && e.target.className.includes("close"))) {
+        modal.style.display = "none";
+    }
+
+    // 2. Nếu người dùng bấm ra ngoài khoảng đen xung quanh bảng
+    if (e.target === modal) {
+        modal.style.display = "none";
     }
 });
